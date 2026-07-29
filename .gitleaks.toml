@@ -1,0 +1,12 @@
+# ResumeForge — local secret scan (pre-public GitHub)
+title = "ResumeForge"
+
+[extend]
+useDefault = true
+
+[allowlist]
+paths = [
+  '''node_modules''',
+  '''dist''',
+  '''\.git''',
+]

@@ -1,0 +1,8 @@
+# ResumeForge — security contact (RFC 9116)
+Contact: https://github.com/mck3nz1chantz-stack/ResumeForge/security/advisories/new
+Expires: 2027-07-29T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://resumeforge-81d.pages.dev/.well-known/security.txt
+Policy: https://github.com/mck3nz1chantz-stack/ResumeForge/blob/main/docs/PRIVACY.md
+# Scope: static SPA only. No user accounts; resume data stays in the browser.
+# Report security issues via GitHub Security Advisories (preferred).

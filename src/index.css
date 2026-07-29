@@ -1,0 +1,1808 @@
+@import 'tailwindcss';
+
+:root {
+  color-scheme: dark;
+  font-family:
+    'Inter',
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: #0b0f14;
+  color: #e8eef5;
+  /* Avoid iOS rubber-band scrolling traps under fixed chrome */
+  overscroll-behavior-y: none;
+}
+
+#root {
+  min-height: 100dvh;
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+/* ——— Clickability / CTA reactivity ——— */
+button:not(:disabled),
+[role='button']:not([aria-disabled='true']),
+.rf-clickable {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button:disabled,
+[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+/* Keyboard focus — obvious on all controls */
+button:focus-visible,
+.rf-clickable:focus-visible,
+.rf-btn:focus-visible,
+a:focus-visible {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
+}
+
+/* Press / flash helpers (usePressFlash) */
+.rf-interactive {
+  transition:
+    transform 0.12s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease,
+    color 0.15s ease;
+}
+
+.rf-interactive.rf-is-down,
+.rf-btn:active:not(:disabled),
+.rf-clickable:active {
+  transform: scale(0.97);
+  filter: brightness(1.12);
+}
+
+.rf-interactive.rf-is-flash {
+  box-shadow:
+    0 0 0 2px #0b0f14,
+    0 0 0 4px #fbbf24,
+    0 0 20px rgba(251, 191, 36, 0.45);
+}
+
+@keyframes rf-pulse-once {
+  0% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(251, 191, 36, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
+  }
+}
+
+.rf-interactive.rf-is-flash {
+  animation: rf-pulse-once 0.35s ease-out;
+}
+
+/* Form field baseline — 16px text prevents iOS focus zoom */
+.rf-input {
+  @apply w-full cursor-text rounded-lg border border-slate-700 bg-slate-900/80 px-3 py-2.5 text-base text-slate-100 placeholder:text-slate-500 outline-none transition sm:py-2 sm:text-sm;
+  @apply hover:border-slate-500 focus:border-amber-500/80 focus:ring-2 focus:ring-amber-500/25;
+}
+
+.rf-label {
+  @apply mb-1 block text-xs font-medium uppercase tracking-wide text-slate-400;
+}
+
+.rf-btn {
+  @apply inline-flex min-h-10 select-none items-center justify-center gap-1.5 rounded-lg border border-slate-500/80 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-50 shadow-sm;
+  @apply hover:border-slate-400 hover:bg-slate-700 hover:shadow-md hover:brightness-110;
+  @apply active:border-amber-500/50 active:bg-slate-600;
+  @apply disabled:pointer-events-none disabled:opacity-45 disabled:shadow-none disabled:hover:brightness-100;
+  transition:
+    transform 0.12s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease,
+    color 0.15s ease;
+}
+
+.rf-btn-primary {
+  @apply border-amber-500 bg-amber-500 font-semibold text-slate-950 shadow-amber-900/30;
+  @apply hover:border-amber-400 hover:bg-amber-400 hover:shadow-amber-800/40;
+  @apply active:border-amber-300 active:bg-amber-300;
+}
+
+.rf-btn-primary.rf-is-flash,
+.rf-btn-primary:active:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.rf-btn-danger {
+  @apply border-red-700/70 bg-red-950/60 text-red-100;
+  @apply hover:border-red-500 hover:bg-red-900/70 hover:text-red-50;
+  @apply active:bg-red-800/80;
+}
+
+/* Clickable cards / list rows */
+.rf-card {
+  @apply rounded-xl border border-slate-800 bg-slate-900/60 p-4 shadow-sm;
+}
+
+.rf-clickable {
+  transition:
+    transform 0.12s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+  @apply hover:border-slate-500 hover:bg-slate-800/80 hover:shadow-md;
+  @apply active:border-amber-600/40;
+}
+
+.rf-clickable-selected {
+  @apply border-amber-500/70 bg-amber-950/35 ring-2 ring-amber-500/35;
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25);
+}
+
+/* Nav / tabs — clear idle vs selected */
+.rf-tab {
+  @apply min-h-10 flex-1 rounded-md px-3 py-1.5 text-sm font-medium text-slate-400;
+  @apply hover:bg-slate-800/80 hover:text-slate-100;
+  @apply active:bg-slate-700 active:text-white;
+  transition:
+    transform 0.12s ease,
+    background-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.rf-tab-active {
+  @apply bg-slate-700 text-slate-50 shadow-inner ring-1 ring-slate-500/50;
+  @apply hover:bg-slate-600 hover:text-white;
+}
+
+.rf-nav-item {
+  @apply w-full rounded-lg px-3 py-2.5 text-left text-sm text-slate-400;
+  @apply hover:bg-slate-800/80 hover:text-slate-100;
+  @apply active:bg-slate-700 active:text-white;
+  transition:
+    transform 0.12s ease,
+    background-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.rf-nav-item-active {
+  @apply bg-amber-600/25 font-medium text-amber-100 ring-1 ring-amber-500/50;
+  @apply hover:bg-amber-600/35 hover:text-amber-50;
+}
+
+/* Bottom nav */
+.rf-bottom-tab {
+  @apply flex min-h-12 w-full flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1 text-[10px] font-medium text-slate-500;
+  @apply hover:bg-slate-800/70 hover:text-slate-200;
+  @apply active:bg-slate-700 active:text-white;
+  transition:
+    transform 0.12s ease,
+    background-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.rf-bottom-tab-active {
+  @apply bg-amber-950/40 text-amber-300;
+  @apply hover:bg-amber-950/55 hover:text-amber-200;
+  box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rf-interactive,
+  .rf-btn,
+  .rf-clickable {
+    transition: none;
+  }
+
+  .rf-interactive.rf-is-down,
+  .rf-btn:active:not(:disabled),
+  .rf-clickable:active {
+    transform: none;
+  }
+
+  .rf-interactive.rf-is-flash {
+    animation: none;
+  }
+
+  .rf-live-viewport {
+    transition: none;
+  }
+
+  .rf-live-bar.rf-live-flash,
+  .rf-live-flash {
+    animation: none;
+  }
+
+  .rf-live-sheet,
+  .rf-sheet-exit {
+    animation: none;
+  }
+
+  .rf-sheet-backdrop {
+    transition: none;
+  }
+}
+
+/* ——— Live preview chrome (Slice 4) ——— */
+.rf-live-desktop {
+  min-height: 0;
+}
+
+.rf-live-viewport {
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.rf-live-viewport.rf-live-flash {
+  box-shadow:
+    0 0 0 1px rgba(251, 191, 36, 0.35),
+    inset 0 0 24px rgba(251, 191, 36, 0.06);
+}
+
+.rf-live-bar.rf-live-flash,
+.rf-live-flash {
+  animation: rf-live-pulse 0.45s ease;
+}
+
+@keyframes rf-live-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.rf-live-paper-wrap {
+  /* Checker / desk behind paper */
+  background:
+    radial-gradient(ellipse at top, rgba(51, 65, 85, 0.35), transparent 60%),
+    #0f141c;
+  min-height: 100%;
+}
+
+.rf-live-paper-scale {
+  transform-origin: top center;
+}
+
+.rf-live-paper.ats-page-shell {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 12px 40px rgba(0, 0, 0, 0.45);
+  border-radius: 2px;
+}
+
+.rf-live-sheet {
+  animation: rf-sheet-up 0.22s ease-out;
+}
+
+/* Exit: applied to sheet wrapper or live-sheet itself */
+.rf-sheet-exit {
+  animation: rf-sheet-down 0.18s ease-in forwards;
+}
+
+.rf-sheet-backdrop {
+  transition: opacity 0.16s ease;
+}
+
+.rf-sheet-backdrop.rf-sheet-exit {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes rf-sheet-up {
+  from {
+    transform: translateY(12%);
+    opacity: 0.85;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes rf-sheet-down {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(12%);
+    opacity: 0;
+  }
+}
+
+/* ——— ATS resume paper (screen + print) ———
+   Single-column only. Skins vary type, rules, header — not multi-col layouts. */
+.ats-page-shell {
+  width: 100%;
+  max-width: 8.5in;
+  background: #fff;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/**
+ * Locked US Letter layout width (816px @ 96dpi).
+ * Preview and PDF share this geometry — zoom must only use transform:scale.
+ */
+.ats-letter-paper {
+  width: 816px;
+  max-width: 816px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.ats-letter-paper .ats-resume {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.rf-live-paper .ats-resume {
+  min-height: 0;
+}
+
+.ats-resume {
+  /* Type scale tokens — prefs classes override */
+  --ats-name-size: 16.5pt;
+  --ats-body-size: 10.25pt;
+  --ats-meta-size: 9.25pt;
+  --ats-h2-size: 10.25pt;
+  /* Title > company by ~1pt for left-stem eye path */
+  --ats-job-title-size: 11pt;
+  --ats-job-company-size: 10pt;
+  --ats-pad-y: 0.65in;
+  --ats-pad-x: 0.7in;
+  --ats-section-gap: 0.5rem;
+  --ats-job-gap: 0.45rem;
+  --ats-line: 1.36;
+  --ats-ink: #141414;
+  --ats-muted: #3d3d3d;
+  --ats-rule: #1a1a1a;
+  --ats-accent: #1e3a5f;
+  --ats-band: #f4f6f8;
+  --ats-name-font: 'Segoe UI', Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 8.5in;
+  min-height: 11in;
+  padding: var(--ats-pad-y) var(--ats-pad-x);
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+  font-size: var(--ats-body-size);
+  line-height: var(--ats-line);
+  color: var(--ats-ink);
+  background: #fff;
+}
+
+/* —— Locked print prefs (drive CSS + PDF scale factors) —— */
+/* Early scale block — full re-assert after density is further below */
+.ats-resume.ats-scale-sm {
+  --ats-name-size: 15pt;
+  --ats-body-size: 9.5pt;
+  --ats-meta-size: 8.5pt;
+  --ats-h2-size: 9.5pt;
+  --ats-job-title-size: 10.25pt;
+  --ats-job-company-size: 9.25pt;
+}
+
+.ats-resume.ats-scale-md {
+  /* defaults on .ats-resume */
+}
+
+.ats-resume.ats-scale-lg {
+  --ats-name-size: 18pt;
+  --ats-body-size: 11pt;
+  --ats-meta-size: 9.75pt;
+  --ats-h2-size: 11pt;
+  --ats-job-title-size: 11.5pt;
+  --ats-job-company-size: 10.5pt;
+}
+
+.ats-resume.ats-name-serif {
+  --ats-name-font: Georgia, 'Times New Roman', Times, serif;
+}
+
+.ats-resume.ats-name-sans {
+  --ats-name-font: 'Segoe UI', Arial, Helvetica, sans-serif;
+}
+
+/*
+ * Header align dial (printPrefs.headerAlign).
+ * Not ATS-critical — left = classic scan; center = symmetric name/contact.
+ * Spec beats skin defaults so Classic can center and Timeline can go left.
+ */
+.ats-resume.ats-header-left .ats-header,
+.ats-resume.ats-header-left .ats-name,
+.ats-resume.ats-header-left .ats-contact,
+.ats-resume.ats-header-left .ats-target-title {
+  text-align: left;
+}
+
+.ats-resume.ats-header-left .ats-header-rule {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.ats-resume.ats-header-left .ats-internal-banner {
+  text-align: left;
+}
+
+.ats-resume.ats-header-center .ats-header,
+.ats-resume.ats-header-center .ats-name,
+.ats-resume.ats-header-center .ats-contact,
+.ats-resume.ats-header-center .ats-target-title {
+  text-align: center;
+}
+
+.ats-resume.ats-header-center .ats-header-rule {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ats-resume.ats-header-center .ats-internal-banner {
+  text-align: center;
+}
+
+.ats-resume.ats-page-roomy {
+  --ats-pad-y: 0.75in;
+  --ats-pad-x: 0.78in;
+  --ats-section-gap: 0.58rem;
+  --ats-job-gap: 0.52rem;
+  --ats-line: 1.42;
+}
+
+.ats-resume.ats-page-balanced {
+  --ats-pad-y: 0.65in;
+  --ats-pad-x: 0.7in;
+  --ats-section-gap: 0.5rem;
+  --ats-job-gap: 0.42rem;
+  --ats-line: 1.36;
+}
+
+.ats-resume.ats-page-compact {
+  --ats-pad-y: 0.52in;
+  --ats-pad-x: 0.58in;
+  --ats-section-gap: 0.36rem;
+  --ats-job-gap: 0.32rem;
+  --ats-line: 1.28;
+}
+
+@media (max-width: 640px) {
+  .ats-resume {
+    min-height: 0;
+    padding: 0.45in 0.4in;
+    font-size: 9.5pt;
+  }
+
+  .ats-resume .ats-name {
+    font-size: min(15pt, var(--ats-name-size)) !important;
+  }
+}
+
+/* —— Shared structure —— */
+.ats-header {
+  margin-bottom: 0.5rem;
+}
+
+.ats-name {
+  margin: 0;
+  font-family: var(--ats-name-font);
+  font-size: var(--ats-name-size);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  color: var(--ats-ink);
+}
+
+/* Solid-height bar (not height:0 + border) — html2canvas paints this reliably */
+.ats-header-rule {
+  height: 2px;
+  margin: 0.35rem 0 0.4rem;
+  border: 0;
+  background-color: var(--ats-rule);
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.ats-contact {
+  margin: 0;
+  font-size: var(--ats-meta-size);
+  color: var(--ats-muted);
+  letter-spacing: 0.01em;
+}
+
+.ats-section {
+  margin-bottom: var(--ats-section-gap);
+}
+
+/*
+ * Title + separate rule element.
+ * Use solid-height bars (background), not height:0 + border-top —
+ * html2canvas often paints zero-height borders through following text.
+ */
+.ats-section-head {
+  margin: 0 0 0.45rem; /* space under rule before body */
+}
+
+.ats-h2 {
+  margin: 0;
+  padding: 0;
+  border-bottom: none;
+  font-size: var(--ats-h2-size);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  color: var(--ats-ink);
+}
+
+.ats-section-rule {
+  display: block;
+  width: 100%;
+  height: 1.5px;
+  margin: 0.28rem 0 0;
+  border: 0;
+  padding: 0;
+  background-color: var(--ats-rule);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.ats-summary {
+  margin: 0;
+  text-align: left;
+}
+
+.ats-skills {
+  margin: 0 0 0.18rem;
+}
+
+.ats-skills-block {
+  margin: 0;
+}
+
+.ats-skill-label {
+  font-weight: 700;
+  color: var(--ats-ink);
+}
+
+.ats-job {
+  margin-bottom: var(--ats-job-gap);
+  break-inside: avoid;
+  page-break-inside: avoid;
+  padding-bottom: 0.12rem;
+}
+
+/* Classic resume job head: title/company left · dates right */
+.ats-job-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.1rem 0.75rem;
+  margin-bottom: 0.1rem;
+}
+
+.ats-job-head-main {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+/*
+ * Title-weight hierarchy (manager eye path):
+ * job title = heaviest · company = secondary · meta/dates = lightest
+ */
+.ats-job-title {
+  margin: 0;
+  font-size: var(--ats-job-title-size);
+  font-weight: 700;
+  color: var(--ats-ink);
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+}
+
+.ats-job-company {
+  margin: 0.04rem 0 0;
+  font-size: var(--ats-job-company-size);
+  font-weight: 500;
+  color: var(--ats-muted);
+  line-height: 1.3;
+}
+
+.ats-job-meta {
+  flex: 0 1 auto;
+  margin: 0;
+  font-size: var(--ats-meta-size);
+  font-weight: 400;
+  color: var(--ats-muted);
+  font-style: normal;
+  text-align: right;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.ats-job-tools {
+  margin: 0.1rem 0 0.12rem;
+  font-size: var(--ats-meta-size);
+  color: var(--ats-muted);
+}
+
+.ats-job-tools-label {
+  font-weight: 600;
+  font-style: normal;
+  color: var(--ats-ink);
+}
+
+.ats-bullets {
+  margin: 0.18rem 0 0;
+  padding-left: 1.15rem;
+  list-style-type: disc;
+}
+
+.ats-bullets li {
+  margin-bottom: 0.12rem;
+  padding-left: 0.15rem;
+  line-height: 1.35;
+}
+
+.ats-bullets li::marker {
+  color: var(--ats-accent);
+}
+
+.ats-empty {
+  margin: 2rem 0;
+  color: #666;
+  font-style: italic;
+}
+
+.ats-internal-banner {
+  margin: 0.25rem 0 0.35rem;
+  padding: 0.28rem 0.4rem;
+  font-size: 9.5pt;
+  font-weight: 700;
+  color: var(--ats-ink);
+  background: var(--ats-band);
+  border-left: 3px solid var(--ats-accent);
+}
+
+.ats-job-badge {
+  display: inline-block;
+  margin: 0.15rem 0 0.1rem;
+  padding: 0.08rem 0.35rem;
+  font-size: 7.5pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ats-accent);
+  border: 1px solid color-mix(in srgb, var(--ats-accent) 40%, #ccc);
+  border-radius: 2px;
+}
+
+/*
+ * Template density baselines (subtle). Operator pageDensity prefs
+ * (ats-page-*) own padding/line when present; these only nudge gaps.
+ */
+.ats-density-compact {
+  --ats-pad-y: 0.55in;
+  --ats-pad-x: 0.6in;
+  --ats-line: 1.3;
+  --ats-section-gap: 0.38rem;
+  --ats-job-gap: 0.32rem;
+}
+
+.ats-density-dense {
+  --ats-pad-y: 0.48in;
+  --ats-pad-x: 0.52in;
+  --ats-line: 1.24;
+  --ats-section-gap: 0.28rem;
+  --ats-job-gap: 0.26rem;
+}
+
+.ats-density-dense .ats-bullets li {
+  margin-bottom: 0.08rem;
+}
+
+.ats-density-roomy {
+  --ats-pad-y: 0.72in;
+  --ats-pad-x: 0.75in;
+  --ats-line: 1.4;
+  --ats-section-gap: 0.58rem;
+  --ats-job-gap: 0.5rem;
+}
+
+/*
+ * Print prefs re-assert after template density so locked dials win.
+ * (page padding / type scale / name font)
+ */
+.ats-resume.ats-page-roomy {
+  --ats-pad-y: 0.75in;
+  --ats-pad-x: 0.78in;
+  --ats-section-gap: 0.58rem;
+  --ats-job-gap: 0.52rem;
+  --ats-line: 1.42;
+}
+
+.ats-resume.ats-page-balanced {
+  --ats-pad-y: 0.65in;
+  --ats-pad-x: 0.7in;
+  --ats-section-gap: 0.5rem;
+  --ats-job-gap: 0.42rem;
+  --ats-line: 1.36;
+}
+
+.ats-resume.ats-page-compact {
+  --ats-pad-y: 0.52in;
+  --ats-pad-x: 0.58in;
+  --ats-section-gap: 0.36rem;
+  --ats-job-gap: 0.32rem;
+  --ats-line: 1.28;
+}
+
+.ats-resume.ats-scale-sm {
+  --ats-name-size: 15pt;
+  --ats-body-size: 9.5pt;
+  --ats-meta-size: 8.5pt;
+  --ats-h2-size: 9.5pt;
+  --ats-job-title-size: 10.25pt;
+  --ats-job-company-size: 9.25pt;
+}
+
+.ats-resume.ats-scale-md {
+  --ats-name-size: 16.5pt;
+  --ats-body-size: 10.25pt;
+  --ats-meta-size: 9.25pt;
+  --ats-h2-size: 10.25pt;
+  --ats-job-title-size: 11pt;
+  --ats-job-company-size: 10pt;
+}
+
+.ats-resume.ats-scale-lg {
+  --ats-name-size: 18pt;
+  --ats-body-size: 11pt;
+  --ats-meta-size: 9.75pt;
+  --ats-h2-size: 11pt;
+  --ats-job-title-size: 11.5pt;
+  --ats-job-company-size: 10.5pt;
+}
+
+.ats-resume.ats-name-serif {
+  --ats-name-font: Georgia, 'Times New Roman', Times, serif;
+}
+
+.ats-resume.ats-name-sans {
+  --ats-name-font: 'Segoe UI', Arial, Helvetica, sans-serif;
+}
+
+/* —— Skin: Classic (navy ink, double header rule) —— */
+.ats-skin-classic {
+  --ats-accent: #1a365d;
+  --ats-rule: #1a365d;
+}
+
+.ats-skin-classic .ats-header-rule {
+  height: 3px;
+  margin: 0.4rem 0 0.45rem;
+  /* double-rule feel via stacked gradients */
+  background: linear-gradient(
+    to bottom,
+    var(--ats-rule) 0 2px,
+    transparent 2px 3px,
+    #94a3b8 3px 4px
+  );
+  background-size: 100% 4px;
+  height: 4px;
+}
+
+.ats-skin-classic .ats-name {
+  letter-spacing: 0.01em;
+  /* name font/size from --ats-name-font / --ats-name-size (prefs) */
+}
+
+/* —— Skin: Compact (charcoal, thin rules) —— */
+.ats-skin-compact {
+  --ats-accent: #292524;
+  --ats-rule: #44403c;
+  --ats-muted: #57534e;
+}
+
+.ats-skin-compact .ats-header-rule {
+  height: 1px;
+  margin: 0.25rem 0 0.3rem;
+}
+
+.ats-skin-compact .ats-h2 {
+  letter-spacing: 0.1em;
+  font-size: 9.5pt;
+}
+
+.ats-skin-compact .ats-section-rule {
+  height: 1px;
+}
+
+/* —— Skin: Internal (amber accent for in-house path) —— */
+.ats-skin-internal {
+  --ats-accent: #92400e;
+  --ats-rule: #78350f;
+  --ats-band: #fffbeb;
+}
+
+.ats-skin-internal .ats-header-rule {
+  height: 3px;
+  background-color: var(--ats-accent);
+  margin: 0.35rem 0 0.4rem;
+}
+
+.ats-skin-internal .ats-section-rule {
+  background-color: #d97706;
+}
+
+.ats-skin-internal .ats-internal-banner {
+  border-left-width: 4px;
+  background: #fffbeb;
+}
+
+/* —— Skin: Skills-first (band behind skills) —— */
+.ats-skin-skills {
+  --ats-accent: #0f766e;
+  --ats-rule: #115e59;
+  --ats-band: #f0fdfa;
+}
+
+.ats-skin-skills .ats-header-rule {
+  height: 2px;
+  background-color: var(--ats-accent);
+}
+
+.ats-skin-skills .ats-section-skills {
+  background: var(--ats-band);
+  padding: 0.35rem 0.4rem 0.4rem;
+  margin-left: -0.15rem;
+  margin-right: -0.15rem;
+  border-radius: 2px;
+}
+
+.ats-skin-skills .ats-section-skills .ats-section-rule {
+  background-color: #14b8a6;
+}
+
+/* —— Skin: Dense (minimal chrome, max content) —— */
+.ats-skin-dense {
+  --ats-accent: #334155;
+  --ats-rule: #64748b;
+}
+
+.ats-skin-dense .ats-header-rule {
+  height: 1px;
+  margin: 0.2rem 0 0.25rem;
+}
+
+.ats-skin-dense .ats-name {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  /* size from --ats-name-size; dense template nudges via density */
+}
+
+.ats-skin-dense .ats-h2 {
+  font-size: 9pt;
+  letter-spacing: 0.12em;
+}
+
+.ats-skin-dense .ats-section-rule {
+  height: 1px;
+  margin-top: 0.15rem;
+}
+
+/* —— Skin: Ops leader (strong job titles, accent bar left) —— */
+.ats-skin-ops {
+  --ats-accent: #9a3412;
+  --ats-rule: #7c2d12;
+}
+
+.ats-skin-ops .ats-header-rule {
+  height: 5px;
+  margin: 0.4rem 0 0.45rem;
+  background: linear-gradient(
+    to bottom,
+    var(--ats-accent) 0 3px,
+    transparent 3px 4px,
+    #fdba74 4px 5px
+  );
+}
+
+.ats-skin-ops .ats-job {
+  padding-left: 0.45rem;
+  border-left: 2.5px solid color-mix(in srgb, var(--ats-accent) 55%, #e7e5e4);
+}
+
+.ats-skin-ops .ats-job-title {
+  letter-spacing: 0.01em;
+  font-weight: 700;
+}
+
+.ats-skin-ops .ats-job-company {
+  /* Secondary to title — accent hint without beating title weight */
+  font-weight: 600;
+  color: var(--ats-accent);
+}
+
+/* —— Skin: Modern clean (wide letter-spacing, navy) —— */
+.ats-skin-modern {
+  --ats-accent: #1e3a8a;
+  --ats-rule: #1e3a8a;
+  --ats-muted: #475569;
+}
+
+.ats-skin-modern .ats-name {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  /* serif + size from printPrefs (default serif for modern) */
+}
+
+.ats-skin-modern .ats-header-rule {
+  width: 3.2rem;
+  height: 3px;
+  background-color: var(--ats-accent);
+  margin: 0.45rem 0 0.5rem;
+}
+
+.ats-skin-modern .ats-h2 {
+  letter-spacing: 0.14em;
+  color: var(--ats-accent);
+}
+
+/* Gradient bar (real height — no ::after / border-top) */
+.ats-skin-modern .ats-section-rule {
+  height: 1.5px;
+  margin-top: 0.28rem;
+  background: linear-gradient(90deg, var(--ats-accent), #cbd5e1 70%);
+  background-color: transparent;
+}
+
+.ats-skin-modern .ats-contact {
+  letter-spacing: 0.03em;
+}
+
+/* —— Skin: Executive (letter-spaced caps name, gold rule) —— */
+.ats-skin-executive {
+  --ats-accent: #713f12;
+  --ats-rule: #a16207;
+  --ats-muted: #44403c;
+}
+
+.ats-skin-executive .ats-name {
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.ats-skin-executive .ats-header-rule {
+  height: 5px;
+  margin: 0.35rem 0 0.4rem;
+  background: linear-gradient(
+    to bottom,
+    var(--ats-rule) 0 1px,
+    transparent 1px 4px,
+    var(--ats-rule) 4px 5px
+  );
+}
+
+.ats-skin-executive .ats-h2 {
+  letter-spacing: 0.14em;
+  font-size: 9.5pt;
+}
+
+.ats-skin-executive .ats-section-rule {
+  height: 1px;
+  background-color: #d6d3d1;
+}
+
+.ats-skin-executive .ats-job-title {
+  letter-spacing: 0.02em;
+  font-weight: 700;
+}
+
+/* —— Skin: Tech ops (slate, mono-ish meta) —— */
+.ats-skin-tech {
+  --ats-accent: #0e7490;
+  --ats-rule: #155e75;
+  --ats-band: #ecfeff;
+  --ats-muted: #334155;
+}
+
+.ats-skin-tech .ats-name {
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ats-skin-tech .ats-header-rule {
+  height: 4px;
+  margin: 0.35rem 0 0.45rem;
+  background: linear-gradient(
+    to bottom,
+    var(--ats-accent) 0 2px,
+    #67e8f9 2px 4px
+  );
+}
+
+.ats-skin-tech .ats-job-meta {
+  font-family: ui-monospace, 'Cascadia Code', 'Segoe UI Mono', monospace;
+  font-style: normal;
+  letter-spacing: -0.01em;
+}
+
+.ats-skin-tech .ats-section-skills .ats-skills {
+  padding: 0.1rem 0;
+}
+
+.ats-skin-tech .ats-h2 {
+  color: var(--ats-accent);
+}
+
+.ats-skin-tech .ats-section-rule {
+  background-color: #67e8f9;
+}
+
+/* —— Skin: Roomy (serif body feel on name only) —— */
+.ats-skin-roomy {
+  --ats-accent: #1e293b;
+  --ats-rule: #0f172a;
+}
+
+.ats-skin-roomy .ats-name {
+  font-weight: 700;
+  /* serif + size from printPrefs (default serif for roomy) */
+}
+
+.ats-skin-roomy .ats-header-rule {
+  height: 1px;
+  background-color: var(--ats-rule);
+  margin: 0.5rem 0 0.55rem;
+}
+
+.ats-skin-roomy .ats-h2 {
+  letter-spacing: 0.12em;
+}
+
+.ats-skin-roomy .ats-section-rule {
+  height: 1px;
+}
+
+.ats-skin-roomy .ats-bullets li {
+  margin-bottom: 0.18rem;
+}
+
+/* —— Skin: Quality (forest, certs emphasis) —— */
+.ats-skin-quality {
+  --ats-accent: #14532d;
+  --ats-rule: #166534;
+  --ats-band: #f0fdf4;
+}
+
+.ats-skin-quality .ats-header-rule {
+  height: 2.5px;
+  background-color: var(--ats-accent);
+  margin: 0.4rem 0 0.45rem;
+}
+
+.ats-skin-quality .ats-section-certs {
+  background: var(--ats-band);
+  padding: 0.3rem 0.4rem;
+  border-radius: 2px;
+  border-left: 3px solid var(--ats-accent);
+}
+
+.ats-skin-quality .ats-section-rule {
+  background-color: #4ade80;
+}
+
+/* —— Skin: Early career (softer, friendlier) —— */
+.ats-skin-early {
+  --ats-accent: #3730a3;
+  --ats-rule: #4338ca;
+  --ats-band: #eef2ff;
+  --ats-muted: #4b5563;
+}
+
+.ats-skin-early .ats-name {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.ats-skin-early .ats-header-rule {
+  width: 4rem;
+  height: 3px;
+  background-color: var(--ats-accent);
+  margin: 0.4rem 0 0.45rem;
+}
+
+.ats-skin-early .ats-section-education {
+  background: var(--ats-band);
+  padding: 0.3rem 0.4rem;
+  border-radius: 2px;
+}
+
+.ats-skin-early .ats-h2 {
+  color: var(--ats-accent);
+}
+
+/* dashed look without border-top (capture-safe) */
+.ats-skin-early .ats-section-rule {
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    #a5b4fc 0 6px,
+    transparent 6px 10px
+  );
+  background-color: transparent;
+}
+
+/* Target title under name (application targetTitle) */
+.ats-target-title {
+  margin: 0.15rem 0 0;
+  font-size: 11pt;
+  font-weight: 600;
+  color: var(--ats-accent, #1a365d);
+  letter-spacing: 0.01em;
+}
+
+/* —— Skin: Floor worker (red header band — factory ref) —— */
+.ats-skin-floor {
+  --ats-accent: #b91c1c;
+  --ats-rule: #991b1b;
+  --ats-muted: #57534e;
+}
+
+.ats-skin-floor .ats-header {
+  background: #b91c1c;
+  color: #fff;
+  margin: -0.15rem -0.15rem 0.55rem;
+  padding: 0.55rem 0.55rem 0.5rem;
+  border-radius: 2px;
+}
+
+.ats-skin-floor .ats-name {
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.ats-skin-floor .ats-target-title {
+  color: #fecaca;
+  font-weight: 600;
+}
+
+.ats-skin-floor .ats-contact {
+  color: #fee2e2;
+}
+
+.ats-skin-floor .ats-header-rule {
+  height: 0;
+  margin: 0;
+  background: transparent;
+}
+
+.ats-skin-floor .ats-h2 {
+  letter-spacing: 0.1em;
+  color: #991b1b;
+}
+
+.ats-skin-floor .ats-section-rule {
+  height: 1.5px;
+  background-color: #fca5a5;
+}
+
+/* —— Skin: Production lead (caps name, orange company — supervisor ref) —— */
+.ats-skin-prodlead {
+  --ats-accent: #ea580c;
+  --ats-rule: #1c1917;
+  --ats-muted: #57534e;
+}
+
+.ats-skin-prodlead .ats-name {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1c1917;
+}
+
+.ats-skin-prodlead .ats-target-title {
+  color: #ea580c;
+  font-weight: 700;
+  font-size: 11.5pt;
+}
+
+.ats-skin-prodlead .ats-header-rule {
+  height: 2.5px;
+  background-color: #1c1917;
+  margin: 0.35rem 0 0.4rem;
+}
+
+.ats-skin-prodlead .ats-h2 {
+  letter-spacing: 0.12em;
+  font-weight: 800;
+  color: #1c1917;
+}
+
+.ats-skin-prodlead .ats-section-rule {
+  height: 2px;
+  background-color: #1c1917;
+}
+
+.ats-skin-prodlead .ats-job-title {
+  font-weight: 700;
+}
+
+.ats-skin-prodlead .ats-job-company {
+  color: #ea580c;
+  font-weight: 700;
+}
+
+/* —— Skin: Mfg associate (steel blue industrial — Zety mfg ref) —— */
+.ats-skin-mfgassoc {
+  --ats-accent: #1e40af;
+  --ats-rule: #2563eb;
+  --ats-band: #eff6ff;
+  --ats-muted: #475569;
+}
+
+.ats-skin-mfgassoc .ats-name {
+  font-weight: 800;
+  color: #1e3a8a;
+  letter-spacing: 0.01em;
+}
+
+.ats-skin-mfgassoc .ats-target-title {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.ats-skin-mfgassoc .ats-header-rule {
+  height: 2px;
+  background-color: #2563eb;
+  margin: 0.35rem 0 0.4rem;
+}
+
+.ats-skin-mfgassoc .ats-h2 {
+  letter-spacing: 0.08em;
+  color: #1e40af;
+}
+
+.ats-skin-mfgassoc .ats-section-rule {
+  height: 1px;
+  background-color: #93c5fd;
+}
+
+.ats-skin-mfgassoc .ats-section-skills {
+  background: var(--ats-band);
+  padding: 0.35rem 0.4rem 0.4rem;
+  margin-left: -0.1rem;
+  margin-right: -0.1rem;
+  border-radius: 2px;
+}
+
+.ats-skin-mfgassoc .ats-section-skills .ats-section-rule {
+  background-color: #60a5fa;
+}
+
+/* —— Skin: Timeline engineer (purple rail — Binder ref) —— */
+.ats-skin-timeline {
+  --ats-accent: #a21caf;
+  --ats-rule: #c026d3;
+  --ats-muted: #57534e;
+}
+
+.ats-skin-timeline .ats-name {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.ats-skin-timeline .ats-header {
+  text-align: center;
+}
+
+.ats-skin-timeline .ats-contact {
+  text-align: center;
+}
+
+.ats-skin-timeline .ats-target-title {
+  text-align: center;
+  color: #a21caf;
+}
+
+.ats-skin-timeline .ats-header-rule {
+  width: 2.5rem;
+  height: 3px;
+  margin: 0.4rem auto 0.5rem;
+  background-color: #c026d3;
+}
+
+.ats-skin-timeline .ats-h2 {
+  color: #a21caf;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  text-transform: none;
+  font-size: 11pt;
+}
+
+.ats-skin-timeline .ats-section-rule {
+  height: 0;
+  margin: 0;
+  background: transparent;
+}
+
+.ats-skin-timeline .ats-job {
+  padding-left: 0.75rem;
+  border-left: 2px solid #e9d5ff;
+  position: relative;
+}
+
+.ats-skin-timeline .ats-job::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 0.35rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c026d3;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #e9d5ff;
+}
+
+.ats-skin-timeline .ats-job-title {
+  font-weight: 700;
+}
+
+/* —— Skin: Engineer entry (violet experience-first — Resume Worded mfg eng) —— */
+.ats-skin-engentry {
+  --ats-accent: #6d28d9;
+  --ats-rule: #7c3aed;
+  --ats-band: #f5f3ff;
+  --ats-muted: #64748b;
+}
+
+.ats-skin-engentry .ats-name {
+  font-weight: 800;
+  color: #5b21b6;
+  letter-spacing: 0.01em;
+}
+
+.ats-skin-engentry .ats-target-title {
+  color: #7c3aed;
+  font-weight: 500;
+}
+
+.ats-skin-engentry .ats-header-rule {
+  height: 0;
+  margin: 0.15rem 0 0.35rem;
+  background: transparent;
+}
+
+.ats-skin-engentry .ats-h2 {
+  letter-spacing: 0.1em;
+  color: #6d28d9;
+  font-weight: 700;
+}
+
+.ats-skin-engentry .ats-section-rule {
+  height: 1px;
+  background-color: #c4b5fd;
+}
+
+.ats-skin-engentry .ats-section-skills {
+  background: var(--ats-band);
+  padding: 0.3rem 0.4rem;
+  border-radius: 2px;
+}
+
+.ats-skin-engentry .ats-job-title {
+  font-weight: 600;
+}
+
+/* —— Skin: Classic green (twin rules, centered — first-job / school ref) —— */
+.ats-skin-green {
+  --ats-accent: #166534;
+  --ats-rule: #15803d;
+  --ats-muted: #57534e;
+}
+
+.ats-skin-green .ats-header {
+  text-align: center;
+}
+
+.ats-skin-green .ats-name {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #14532d;
+  text-align: center;
+}
+
+.ats-skin-green .ats-target-title {
+  text-align: center;
+  color: #166534;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.ats-skin-green .ats-contact {
+  text-align: center;
+}
+
+.ats-skin-green .ats-header-rule {
+  height: 5px;
+  margin: 0.35rem 0 0.4rem;
+  background: linear-gradient(
+    to bottom,
+    #166534 0 1.5px,
+    transparent 1.5px 3.5px,
+    #166534 3.5px 5px
+  );
+}
+
+.ats-skin-green .ats-h2 {
+  letter-spacing: 0.12em;
+  color: #166534;
+  font-weight: 700;
+}
+
+.ats-skin-green .ats-section-rule {
+  height: 1.5px;
+  background-color: #22c55e;
+}
+
+/*
+ * Scan mode (coach only) — highlight manager first-pass fields.
+ * Name · titles · companies · dates · education. Never used in PDF export.
+ */
+.ats-resume.ats-scan-mode .ats-summary,
+.ats-resume.ats-scan-mode .ats-skills-block,
+.ats-resume.ats-scan-mode .ats-bullets,
+.ats-resume.ats-scan-mode .ats-job-tools,
+.ats-resume.ats-scan-mode .ats-section-skills,
+.ats-resume.ats-scan-mode .ats-section-certs,
+.ats-resume.ats-scan-mode .ats-section-summary,
+.ats-resume.ats-scan-mode .ats-contact,
+.ats-resume.ats-scan-mode .ats-target-title,
+.ats-resume.ats-scan-mode .ats-internal-banner,
+.ats-resume.ats-scan-mode .ats-job-badge,
+.ats-resume.ats-scan-mode .ats-empty {
+  opacity: 0.32;
+}
+
+.ats-resume.ats-scan-mode .ats-name {
+  box-shadow: inset 0 0 0 2px #d97706;
+  border-radius: 2px;
+  padding: 0.05rem 0.15rem;
+  background: color-mix(in srgb, #fbbf24 12%, transparent);
+}
+
+.ats-resume.ats-scan-mode .ats-job-title {
+  box-shadow: inset 0 -2px 0 #d97706;
+  background: color-mix(in srgb, #fbbf24 10%, transparent);
+  opacity: 1;
+}
+
+.ats-resume.ats-scan-mode .ats-job-company {
+  box-shadow: inset 0 -1px 0 color-mix(in srgb, #d97706 70%, #94a3b8);
+  background: color-mix(in srgb, #fbbf24 6%, transparent);
+  opacity: 1;
+}
+
+.ats-resume.ats-scan-mode .ats-job-meta {
+  box-shadow: inset 0 -1px 0 color-mix(in srgb, #d97706 50%, #94a3b8);
+  opacity: 1;
+}
+
+.ats-resume.ats-scan-mode .ats-section-education {
+  box-shadow: inset 0 0 0 1.5px #d97706;
+  border-radius: 3px;
+  padding: 0.2rem 0.3rem;
+  background: color-mix(in srgb, #fbbf24 8%, transparent);
+  opacity: 1;
+}
+
+.ats-resume.ats-scan-mode .ats-section-education .ats-bullets {
+  opacity: 0.85;
+}
+
+.ats-resume.ats-scan-mode .ats-h2 {
+  opacity: 0.55;
+}
+
+/*
+ * PDF export sheet — same design tokens as live paper (WYSIWYG).
+ * Only lock letter width, full min-height, and kill mobile overrides.
+ * Section rules are real DOM (.ats-section-rule) so they never paint
+ * through following text in html2canvas.
+ */
+.ats-export-capture {
+  width: 816px !important; /* 8.5in @ 96dpi */
+  max-width: 816px !important;
+  background: #ffffff !important;
+  color: #141414 !important;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.ats-resume.ats-pdf-sheet,
+.ats-export-capture .ats-resume {
+  box-sizing: border-box !important;
+  width: 816px !important;
+  max-width: 816px !important;
+  min-height: 1056px !important;
+  height: auto !important;
+  margin: 0 !important;
+  /* Same tokens as live paper */
+  padding: var(--ats-pad-y) var(--ats-pad-x) !important;
+  font-size: var(--ats-body-size) !important;
+  line-height: var(--ats-line) !important;
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif !important;
+  box-shadow: none !important;
+  border: none !important;
+  background: #ffffff !important;
+  color: var(--ats-ink) !important;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.ats-resume.ats-pdf-sheet .ats-name,
+.ats-export-capture .ats-resume .ats-name {
+  font-family: var(--ats-name-font) !important;
+  font-size: var(--ats-name-size) !important;
+}
+
+.ats-resume.ats-pdf-sheet .ats-h2,
+.ats-export-capture .ats-resume .ats-h2 {
+  font-size: var(--ats-h2-size) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-bottom: none !important;
+}
+
+.ats-resume.ats-pdf-sheet .ats-section-head,
+.ats-export-capture .ats-resume .ats-section-head {
+  margin: 0 0 0.4rem !important;
+}
+
+.ats-resume.ats-pdf-sheet .ats-section-rule,
+.ats-export-capture .ats-resume .ats-section-rule {
+  display: block !important;
+  /* Keep skin colors/heights; only ensure layout for capture */
+  margin: 0.28rem 0 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  min-height: 1px;
+}
+
+.ats-resume.ats-pdf-sheet .ats-section,
+.ats-export-capture .ats-resume .ats-section {
+  margin-bottom: var(--ats-section-gap) !important;
+}
+
+.ats-resume.ats-pdf-sheet .ats-job-title,
+.ats-export-capture .ats-resume .ats-job-title {
+  font-size: var(--ats-job-title-size) !important;
+}
+
+.ats-resume.ats-pdf-sheet .ats-job-company,
+.ats-export-capture .ats-resume .ats-job-company {
+  font-size: var(--ats-job-company-size) !important;
+}
+
+.ats-resume.ats-pdf-sheet .ats-contact,
+.ats-resume.ats-pdf-sheet .ats-job-meta,
+.ats-resume.ats-pdf-sheet .ats-job-tools,
+.ats-export-capture .ats-resume .ats-contact,
+.ats-export-capture .ats-resume .ats-job-meta,
+.ats-export-capture .ats-resume .ats-job-tools {
+  font-size: var(--ats-meta-size) !important;
+}
+
+/* Never scrunch export via mobile media */
+@media (max-width: 640px) {
+  .ats-resume.ats-pdf-sheet,
+  .ats-export-capture .ats-resume {
+    padding: var(--ats-pad-y) var(--ats-pad-x) !important;
+    font-size: var(--ats-body-size) !important;
+    min-height: 1056px !important;
+  }
+
+  .ats-resume.ats-pdf-sheet .ats-name,
+  .ats-export-capture .ats-resume .ats-name {
+    font-size: var(--ats-name-size) !important;
+  }
+}
+
+.ats-export-capture .ats-resume.ats-scan-mode .ats-summary,
+.ats-export-capture .ats-resume.ats-scan-mode .ats-bullets,
+.ats-export-capture .ats-resume.ats-scan-mode .ats-skills-block {
+  opacity: 1 !important;
+}
+
+/* Mini gallery cards */
+.ats-resume.ats-mini {
+  min-height: 0 !important;
+  padding: 0.35in 0.4in !important;
+  font-size: 9pt;
+  pointer-events: none;
+}
+
+.ats-resume.ats-mini .ats-name {
+  font-size: 11pt !important;
+  letter-spacing: 0.02em !important;
+}
+
+.ats-resume.ats-mini .ats-header-rule {
+  margin: 0.2rem 0 0.25rem !important;
+}
+
+.ats-resume.ats-mini .ats-section-skills,
+.ats-resume.ats-mini .ats-section-certs,
+.ats-resume.ats-mini .ats-section-education {
+  background: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* Print: hide chrome, show only clean resume */
+.print-only-resume {
+  display: none;
+}
+
+@media print {
+  /* Margins live in .ats-resume padding — avoid double page margin */
+  @page {
+    size: letter;
+    margin: 0.35in;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only-resume {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-only-resume .ats-resume {
+    min-height: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+    /* Keep skin padding/type; page margin handles outer edge */
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-only-resume .ats-resume.ats-density-compact,
+  .print-only-resume .ats-resume.ats-density-dense {
+    font-size: 9.5pt;
+    line-height: 1.28;
+  }
+
+  .print-only-resume .ats-section-head {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .print-only-resume .ats-h2 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .print-only-resume .ats-section-rule {
+    background-color: #000 !important;
+  }
+
+  .print-only-resume .ats-job {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print-only-resume .ats-job-title {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .print-only-resume .ats-section {
+    break-inside: avoid-page;
+  }
+
+  /* Never print scan-mode coach chrome */
+  .ats-resume.ats-scan-mode .ats-summary,
+  .ats-resume.ats-scan-mode .ats-skills-block,
+  .ats-resume.ats-scan-mode .ats-bullets,
+  .ats-resume.ats-scan-mode .ats-job-tools,
+  .ats-resume.ats-scan-mode .ats-section-skills,
+  .ats-resume.ats-scan-mode .ats-section-certs,
+  .ats-resume.ats-scan-mode .ats-section-summary,
+  .ats-resume.ats-scan-mode .ats-contact,
+  .ats-resume.ats-scan-mode .ats-h2 {
+    opacity: 1 !important;
+  }
+
+  .ats-resume.ats-scan-mode .ats-name,
+  .ats-resume.ats-scan-mode .ats-job-title,
+  .ats-resume.ats-scan-mode .ats-job-company,
+  .ats-resume.ats-scan-mode .ats-job-meta,
+  .ats-resume.ats-scan-mode .ats-section-education {
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  .print-only-resume .ats-empty {
+    display: none !important;
+  }
+
+  .print-only-resume .ats-internal-banner {
+    border-bottom: 1px solid #333 !important;
+  }
+
+  /* Hide all app chrome; only .print-only-resume remains */
+  body > #root > *:not(.print-only-resume),
+  header,
+  nav,
+  footer,
+  main,
+  .rf-app > header,
+  .rf-app > footer,
+  .rf-app > div:not(.print-only-resume) {
+    display: none !important;
+  }
+
+  .rf-app {
+    background: #fff !important;
+    min-height: 0 !important;
+  }
+
+  .print-only-resume {
+    display: block !important;
+  }
+}

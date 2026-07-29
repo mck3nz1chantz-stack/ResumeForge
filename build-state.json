@@ -1,0 +1,45 @@
+{
+  "project": "ResumeForge",
+  "brand": "ChantzMedia",
+  "resumeForge": {
+    "programPhase": 7,
+    "status": "active",
+    "updatedAt": "2026-07-29T22:30:00Z",
+    "notes": "Local-only privacy + tutorial; VibeAndSafety gate 2026-07-29"
+  },
+  "finalPolish": {
+    "mode": "ship",
+    "scope": "full app shell · dual-pane · mobile · 3-C · flows",
+    "status": "ship",
+    "p0Count": 8,
+    "p0Shipped": 8,
+    "p1Shipped": 9,
+    "notesPath": "docs/drafts/final-polish-backlog.md",
+    "updatedAt": "2026-07-26T24:10:00Z",
+    "verdict": "Ship — P0+P1 done"
+  },
+  "clientSession": {
+    "intent": "tutorial-and-public-ux",
+    "lens": "client-operator-path",
+    "updatedAt": "2026-07-29T22:00:00Z",
+    "doneMeans": "Easy multi-build resume tool with in-app guide; docs ready for others / GitHub"
+  },
+  "vibePass": {
+    "mode": "gate",
+    "status": "cleared",
+    "signOff": "VIBE-CLEARED-WITH-NOTES",
+    "p0Count": 0,
+    "p1Open": 0,
+    "gitleaks": "clean-2026-07-29",
+    "notesPath": "docs/drafts/vibe-report.md",
+    "updatedAt": "2026-07-29T21:47:00Z"
+  },
+  "safetyPass": {
+    "mode": "gate",
+    "operational": "conditional",
+    "grokLawStatus": "none",
+    "p0SecretsAuth": "clear",
+    "notesPath": "docs/drafts/safety-report.md",
+    "updatedAt": "2026-07-29T22:30:00Z"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "ClientHubFacts.v1",
+  "project": "ResumeForge",
+  "brand": "ChantzMedia",
+  "updatedAt": "2026-07-29",
+  "plainLanguage": {
+    "whatItIs": "A free local resume builder: one career history, many tailored resume versions (builds), ATS-friendly PDF export.",
+    "whoFor": "Anyone preparing job applications who wants clear structure without retyping their history each time — and without putting resume PII in a cloud account.",
+    "howToStart": "Open the app → How to use tutorial, or follow Layout → Contact → Summary → Skills → Experience → This build → PDF.",
+    "dataNote": "Contact info and resume content stay on this device only. No account, no cloud sync of resume fields. Export JSON/PDF only when the user chooses."
+  },
+  "confirmations": {
+    "tutorialInApp": true,
+    "masterVsBuildsDocumented": true,
+    "publicReadme": true,
+    "multiBuildSupported": true,
+    "atsSafeDefaultLayout": true,
+    "githubReadyDocs": true,
+    "localOnlyNoAccount": true,
+    "privacyExplainedInUi": true,
+    "noResumeContentTelemetry": true
+  },
+  "artifacts": [
+    "src/components/HowToUseDialog.tsx",
+    "src/data/tutorial.ts",
+    "docs/TUTORIAL.md",
+    "README.md"
+  ],
+  "liveUrl": "https://resumeforge-81d.pages.dev/",
+  "nextOperatorSteps": [
+    "Preview How to use in the app (header / More / first-run)",
+    "Say approved - deploy to ship tutorial UI",
+    "When ready for GitHub: init git if needed, add LICENSE, push public repo (no personal resume JSON)"
+  ]
+}
