@@ -104,6 +104,19 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     tip: 'If a bullet still has [brackets], replace them with your facts before you send the PDF.',
   },
   {
+    id: 'mobile',
+    title: 'Phone & install',
+    body: 'ResumeForge is a mobile web app (PWA-ready). On a phone you edit with bottom tabs + step chips; live preview opens as a sheet.',
+    bullets: [
+      'Bottom tabs: Layout · Jobs · Build · More — full path is also in the horizontal step chips',
+      'Live bar above the tabs → expand to full preview; PDF is always in the header',
+      'Install: Safari Share → Add to Home Screen (iOS) or Chrome ⋮ → Install / Add to Home screen (Android)',
+      'Computer install: clone from GitHub, npm install, npm run dev (needs Node)',
+      'Data does not sync phone ↔ desktop — use Export / Import backup JSON',
+    ],
+    tip: `Share ${GITHUB_REPO_URL} publicly. Optional hosted demos are convenience only; prefer home-screen install or local clone for daily use.`,
+  },
+  {
     id: 'backup',
     title: 'Backup, phone, and reset',
     body: 'Because nothing is stored in “the cloud” for you, backup is your job — especially before clearing the browser or switching devices.',

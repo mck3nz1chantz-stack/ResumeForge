@@ -9,6 +9,7 @@ import { CertsPanel, EducationPanel } from './components/EducationCertsPanel'
 import { CtaButton } from './components/CtaButton'
 import { DeviceDataBanner } from './components/DeviceDataBanner'
 import { HowToUseDialog } from './components/HowToUseDialog'
+import { MobileInstallBanner } from './components/MobileInstallBanner'
 import {
   GITHUB_REPO_HINT,
   GITHUB_REPO_LABEL,
@@ -487,6 +488,7 @@ export default function App() {
   const handleMobileNav = (next: NavSection, tab: MobileTab) => {
     closeLiveSheet()
     if (tab === 'more') {
+      setSection(next)
       setMoreHub(true)
       return
     }
@@ -860,6 +862,9 @@ export default function App() {
           onImportClick={() => fileRef.current?.click()}
           appsCount={applications.length}
         />
+        <div className="mt-2">
+          <MobileInstallBanner />
+        </div>
         <div className="mt-2">
           <VersionSwitcher
             applications={applications}
@@ -1276,7 +1281,8 @@ export default function App() {
         </div>
       )}
       <MobileBottomNav
-        section={moreHub ? 'contact' : section}
+        section={section}
+        moreHub={moreHub}
         onNavigate={handleMobileNav}
         appsCount={applications.length}
       />

@@ -5,7 +5,7 @@
     "programPhase": 7,
     "status": "active",
     "updatedAt": "2026-07-29T22:30:00Z",
-    "notes": "Local-only privacy + tutorial; VibeAndSafety gate 2026-07-29"
+    "notes": "Mobile audit pass: PWA install banner, bottom nav Layout/Jobs/Build/More, MOBILE.md"
   },
   "finalPolish": {
     "mode": "ship",

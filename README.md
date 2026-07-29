@@ -17,6 +17,14 @@ npm run dev
 
 Prefer the **GitHub** URL for public posts and virality — so people clone and run on their own machines. Any hosted demo is optional app-shell only; resume data still stays in each user’s browser.
 
+### Phone install (PWA)
+
+1. Open ResumeForge in **Safari** (iOS) or **Chrome** (Android) on a hosted or local HTTPS URL.  
+2. **Add to Home Screen** / **Install app**.  
+3. Data stays in that phone’s browser — Export backup to move later.  
+
+Details: [docs/MOBILE.md](docs/MOBILE.md).
+
 ## Privacy (non-negotiable product rule)
 
 | Promise | Meaning |
@@ -41,7 +49,7 @@ See [docs/PRIVACY.md](docs/PRIVACY.md).
 - **Industry packs** — manufacturing-first prompts; corporate & customer service too  
 - **Print dials** — type size, name sans/serif, page density, **name/contact Left or Center**  
 - **On-device only** — localStorage; full JSON backup export/import  
-- **PWA-ready** — install / Add to Home Screen on phone  
+- **PWA-ready** — Add to Home Screen on phone; install tip banner + bottom tabs (Layout · Jobs · Build · More)  
 
 ## How to use (short)
 

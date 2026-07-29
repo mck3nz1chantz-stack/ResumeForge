@@ -1,62 +1,77 @@
-# ResumeForge on phone
+# ResumeForge on phone (mobile + PWA)
 
-Built for short-notice applications at work (including internal posts with ~1 day to apply).
+Mobile-first responsive UI + installable **PWA**. Resume data stays in **this browser only** (no account sync).
 
-## What works
+## Install options
+
+| Path | Who | Steps |
+|------|-----|--------|
+| **Home screen (PWA)** | Phone / tablet | Open the app in Safari or Chrome → **Add to Home Screen** / Install app |
+| **Local clone** | Computer | `git clone` + `npm install` + `npm run dev` — see [README](../README.md) |
+| **Optional demo host** | Try before clone | Open a hosted build (e.g. Pages) → then install to home screen |
+
+**Public share link:** https://github.com/mck3nz1chantz-stack/ResumeForge  
+
+### iOS (Safari)
+
+1. Open ResumeForge in **Safari** (not an in-app browser if possible).  
+2. Tap **Share** → **Add to Home Screen**.  
+3. Open from the icon (standalone chrome).  
+
+### Android (Chrome)
+
+1. Open ResumeForge in **Chrome**.  
+2. Menu **⋮** → **Install app** or **Add to Home screen**.  
+
+Install requires **HTTPS** (or localhost). Service worker registers on production builds.
+
+## Phone UI map
+
+| Chrome | Purpose |
+|--------|---------|
+| Header **PDF** | Always available download |
+| Header **GH** | Open-source repo |
+| **Layout · Jobs · Build · More** | Bottom tabs (safe-area padded) |
+| Horizontal **step chips** | Full resume order (Contact → … → This build) |
+| **Live** bar above tabs | Expand sheet preview of the paper |
+| **Install** banner | Dismissible home-screen tip (hidden when already installed) |
+
+## What works (audit baseline)
 
 | Capability | Notes |
 |------------|--------|
-| Responsive UI | Bottom nav: Preview · Apps · Jobs · More |
-| Sticky **PDF** | Always in header on phone |
-| Touch targets | ≥44px primary controls; 16px inputs (no iOS zoom) |
-| Safe areas | Notch / home indicator padding |
-| PWA install | Manifest + service worker (production / preview) |
-| Local data | Profile + applications in **this browser** only |
-
-## Same Wi‑Fi as Mac (dev)
-
-1. Run `Open ResumeForge.command` (or `npm run dev`).
-2. Terminal prints **Phone: http://&lt;LAN-IP&gt;:5181/**
-3. Open that URL on your phone (same Wi‑Fi).
-4. Safari/Chrome: Share → **Add to Home Screen** (optional).
-
-Firewall may block inbound; allow Node if the phone cannot connect.
-
-## Work without Mac nearby
-
-Dev server on your home Mac is **not** reachable from the plant.
-
-Options:
-
-1. **Host a build** (Cloudflare Pages / similar, HTTPS) → open on phone → Add to Home Screen.  
-2. Or use phone-only: enter profile once on the phone and keep it there.
+| Responsive layout | Bottom nav + dual-pane desktop |
+| Touch targets | Primary controls ≥ ~44px |
+| Inputs | 16px base text (reduces iOS focus zoom) |
+| Safe areas | Notch / home indicator on header & bottom nav |
+| PWA | Manifest + SW (prod); icons 192/512 |
+| Overflow | `overflow-x: clip` on app shell |
+| Local data | Profile + builds on this device only |
 
 ## Desktop ↔ phone data
 
-`localStorage` does **not** sync across devices.
+`localStorage` does **not** sync.
 
-1. Desktop: **Export JSON** (profile).  
-2. AirDrop / email / Files → phone.  
-3. Phone: **More → Import profile JSON**.  
-4. Re-create or export applications similarly if needed (each app has JSON export).
+1. **Export full backup** (JSON).  
+2. AirDrop / email / Files → other device.  
+3. **Import backup** there.
 
-## Fast path when they post today
+## Dev on phone (same Wi‑Fi as Mac)
+
+1. `npm run dev` (or `Open ResumeForge.command`).  
+2. Open the printed **LAN** URL on the phone.  
+3. Optional: Add to Home Screen (may need `VITE_PWA_DEV=1` to test SW).
+
+## Fast path when a job posts today
 
 1. Home screen → ResumeForge  
-2. **Apps** → open or create target role  
-3. Edit summary override / featured jobs if needed  
-4. **PDF** → share into email / internal portal  
+2. **Build** tab → open/create target version  
+3. Adjust summary / jobs on this resume  
+4. **PDF** → share to email / portal  
 
-## Hosted (work, no Mac)
+## Related
 
-See **`DEPLOY.md`** — Cloudflare Pages `resumeforge.pages.dev`. After first deploy, Add to Home Screen and run **Get started** once on the phone.
-
-## Guided setup
-
-Empty profiles open a step-by-step wizard: path (career vs same company) → contact → **education** → chronological jobs with memory prompts → skills → summary → tailor application. Restart anytime from **More** or desktop sidebar.
-
-## PWA notes
-
-- Service worker registers on **production** builds (`npm run build && npm run preview`).  
-- Dev: set `VITE_PWA_DEV=1` to test SW registration.  
-- Install prompts require **HTTPS** (or localhost).
+- Privacy: [PRIVACY.md](PRIVACY.md)  
+- Tutorial: [TUTORIAL.md](TUTORIAL.md)  
+- Deploy: [../DEPLOY.md](../DEPLOY.md)  
+- Audit notes: [drafts/mobile-audit.md](drafts/mobile-audit.md)

@@ -1,7 +1,7 @@
 {
   "name": "ResumeForge",
   "short_name": "ResumeForge",
-  "description": "Tailor manufacturing-ready resumes fast — master profile, applications, ATS PDF.",
+  "description": "Free local resume builder — master profile, many builds, ATS-safe PDF. Data stays on your device.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
