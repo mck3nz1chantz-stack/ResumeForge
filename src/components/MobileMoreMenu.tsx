@@ -1,3 +1,8 @@
+import {
+  GITHUB_REPO_HINT,
+  GITHUB_REPO_LABEL,
+  GITHUB_REPO_URL,
+} from '../data/projectLinks'
 import { CtaButton } from './CtaButton'
 import { usePressFlash } from '../hooks/usePressFlash'
 import type { NavSection } from '../types/profile'
@@ -58,6 +63,18 @@ export function MobileMoreMenu({
           How to use (tutorial)
         </CtaButton>
       )}
+      <a
+        href={GITHUB_REPO_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="rf-btn flex min-h-12 w-full items-center justify-center text-center text-sm font-semibold text-sky-200"
+        title={GITHUB_REPO_HINT}
+      >
+        {GITHUB_REPO_LABEL}
+      </a>
+      <p className="text-center text-[10px] text-slate-500">
+        Share the GitHub link for free clones — not a temporary demo host.
+      </p>
 
       <ul className="space-y-1">
         {ITEMS.map((item) => (

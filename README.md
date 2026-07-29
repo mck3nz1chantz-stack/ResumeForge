@@ -4,6 +4,19 @@
 
 Ideal for job seekers who want **industry-ready formatting** without retyping their history for every application — and **without creating an account or uploading their resume to a SaaS**.
 
+### Open source (share this link)
+
+**Repository:** [github.com/mck3nz1chantz-stack/ResumeForge](https://github.com/mck3nz1chantz-stack/ResumeForge)
+
+```bash
+git clone https://github.com/mck3nz1chantz-stack/ResumeForge.git
+cd ResumeForge
+npm install
+npm run dev
+```
+
+Prefer the **GitHub** URL for public posts and virality — so people clone and run on their own machines. Any hosted demo is optional app-shell only; resume data still stays in each user’s browser.
+
 ## Privacy (non-negotiable product rule)
 
 | Promise | Meaning |

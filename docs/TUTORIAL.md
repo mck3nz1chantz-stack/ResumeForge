@@ -4,6 +4,8 @@ ResumeForge is a **free, local-first** resume builder: enter your career once, t
 
 **Privacy:** your contact info and history stay **on this device**. No account. No cloud sync of resume content. See [PRIVACY.md](PRIVACY.md).
 
+**Share / open source:** https://github.com/mck3nz1chantz-stack/ResumeForge — prefer this over any temporary demo host when posting publicly.
+
 The same guide lives **in the app** under **How to use** (header, sidebar, More menu, or first-run start screen).
 
 ## Core idea

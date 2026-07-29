@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import {
   TUTORIAL_FOOTER,
+  TUTORIAL_GITHUB,
   TUTORIAL_STEPS,
   TUTORIAL_SUBTITLE,
   TUTORIAL_TITLE,
@@ -90,6 +91,20 @@ export function HowToUseDialog({ open, onClose, initialStepId }: Props) {
               </h2>
               <p id={descId} className="mt-0.5 text-xs text-slate-400">
                 {TUTORIAL_SUBTITLE}
+              </p>
+              <a
+                href={TUTORIAL_GITHUB.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-flex max-w-full items-center gap-1 text-xs font-semibold text-sky-300 underline-offset-2 hover:text-sky-200 hover:underline"
+              >
+                {TUTORIAL_GITHUB.label}
+                <span className="font-normal text-slate-500" aria-hidden>
+                  ↗
+                </span>
+              </a>
+              <p className="mt-0.5 text-[10px] leading-snug text-slate-500">
+                {TUTORIAL_GITHUB.hint}
               </p>
             </div>
             <button
@@ -187,6 +202,16 @@ export function HowToUseDialog({ open, onClose, initialStepId }: Props) {
           </div>
           <p className="text-center text-[10px] text-slate-500">
             {TUTORIAL_FOOTER} · Arrow keys to step
+          </p>
+          <p className="text-center text-[10px]">
+            <a
+              href={TUTORIAL_GITHUB.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-sky-400/90 underline-offset-2 hover:underline"
+            >
+              {TUTORIAL_GITHUB.url.replace(/^https:\/\//, '')}
+            </a>
           </p>
         </footer>
       </div>

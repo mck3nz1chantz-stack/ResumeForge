@@ -8,6 +8,7 @@ import {
   PRIVACY_HEADLINE,
   PRIVACY_HOSTING_NOTE,
 } from './privacy'
+import { GITHUB_REPO_HINT, GITHUB_REPO_URL } from './projectLinks'
 
 export type TutorialStep = {
   id: string
@@ -22,6 +23,13 @@ export const TUTORIAL_TITLE = 'How to use ResumeForge'
 export const TUTORIAL_SUBTITLE =
   'Free · on your device · no account. One history, many tailored resumes.'
 
+/** Shown in tutorial chrome — primary share link is GitHub, not a demo host. */
+export const TUTORIAL_GITHUB = {
+  url: GITHUB_REPO_URL,
+  label: 'Open source on GitHub',
+  hint: GITHUB_REPO_HINT,
+} as const
+
 export const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: 'welcome',
@@ -31,8 +39,9 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
       'No sign-up, no subscription, no account to manage',
       'ATS-friendly layouts and a text-selectable PDF for most online applications',
       'Multiple builds (versions) share one master profile',
+      `Open source — share ${GITHUB_REPO_URL} so others can clone and run it on their own machine`,
     ],
-    tip: 'ATS means Applicant Tracking System — software many employers use to store and search applications. Clear structure and real text matter more than flashy designs.',
+    tip: 'ATS means Applicant Tracking System — software many employers use to store and search applications. Clear structure and real text matter more than flashy designs. Prefer the GitHub link for public posts (not a temporary demo host).',
   },
   {
     id: 'privacy',

@@ -9,6 +9,11 @@ import { CertsPanel, EducationPanel } from './components/EducationCertsPanel'
 import { CtaButton } from './components/CtaButton'
 import { DeviceDataBanner } from './components/DeviceDataBanner'
 import { HowToUseDialog } from './components/HowToUseDialog'
+import {
+  GITHUB_REPO_HINT,
+  GITHUB_REPO_LABEL,
+  GITHUB_REPO_URL,
+} from './data/projectLinks'
 import { GuidedOnboard } from './components/GuidedOnboard'
 import { LeverageWizard } from './components/LeverageWizard'
 import { IndustryPackPanel } from './components/IndustryPackPanel'
@@ -614,6 +619,15 @@ export default function App() {
                 master history powers many tailored resume builds. Contact info
                 never leaves this browser unless you export a backup or PDF.
               </p>
+              <a
+                href={GITHUB_REPO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rf-btn flex min-h-11 w-full items-center justify-center text-sm font-semibold text-sky-200"
+                title={GITHUB_REPO_HINT}
+              >
+                {GITHUB_REPO_LABEL}
+              </a>
               <button
                 type="button"
                 className="rf-btn w-full min-h-11 text-sm"
@@ -738,6 +752,15 @@ export default function App() {
             >
               How to use
             </CtaButton>
+            <a
+              href={GITHUB_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rf-btn min-h-10 inline-flex items-center px-3 text-sm font-medium text-sky-200 hover:border-sky-600/50 hover:text-sky-100"
+              title={GITHUB_REPO_HINT}
+            >
+              GitHub
+            </a>
             <CtaButton
               className="min-h-10"
               actionLabels={{
@@ -778,6 +801,16 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-1.5 md:hidden">
+            <a
+              href={GITHUB_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rf-btn min-h-11 min-w-11 inline-flex items-center justify-center px-2 text-xs font-semibold text-sky-200"
+              aria-label={GITHUB_REPO_LABEL}
+              title={GITHUB_REPO_HINT}
+            >
+              GH
+            </a>
             <CtaButton
               variant="primary"
               className="min-h-11 px-3 text-sm font-bold"
@@ -885,6 +918,16 @@ export default function App() {
           >
             How to use
           </button>
+          {' · '}
+          <a
+            href={GITHUB_REPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-sky-400/90 underline-offset-2 hover:underline"
+            title={GITHUB_REPO_HINT}
+          >
+            GitHub
+          </a>
         </p>
       </div>
 
@@ -935,6 +978,15 @@ export default function App() {
           >
             How to use
           </button>
+          <a
+            href={GITHUB_REPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rf-btn mt-2 flex w-full items-center justify-center text-xs font-medium text-sky-200"
+            title={GITHUB_REPO_HINT}
+          >
+            {GITHUB_REPO_LABEL}
+          </a>
           <button
             type="button"
             className="rf-btn mt-2 w-full text-xs"
