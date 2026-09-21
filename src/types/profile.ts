@@ -92,6 +92,7 @@ export type ResumeProfile = {
 }
 
 export type NavSection =
+  | 'apply'
   | 'preview'
   | 'applications'
   | 'jd-tailor'

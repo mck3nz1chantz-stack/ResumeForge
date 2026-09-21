@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AchievementsPanel } from './components/AchievementsPanel'
+import { ApplyNowPanel } from './components/ApplyNowPanel'
 import { ApplicationsPanel } from './components/ApplicationsPanel'
 import { BuildContinueBar } from './components/BuildContinueBar'
 import { BuildStepTabs } from './components/BuildStepTabs'
@@ -9,7 +10,6 @@ import { CertsPanel, EducationPanel } from './components/EducationCertsPanel'
 import { CtaButton } from './components/CtaButton'
 import { DeviceDataBanner } from './components/DeviceDataBanner'
 import { HowToUseDialog } from './components/HowToUseDialog'
-import { MobileInstallBanner } from './components/MobileInstallBanner'
 import {
   GITHUB_REPO_HINT,
   GITHUB_REPO_LABEL,
@@ -37,7 +37,7 @@ import {
 } from './components/NewBuildDialog'
 import { VersionSwitcher } from './components/VersionSwitcher'
 import { evaluateThreeCs } from './data/threeCs'
-import { getPack, resolvePackId } from './data/packs'
+import { resolvePackId } from './data/packs'
 import { useDialogFocus } from './hooks/useDialogFocus'
 import type { ResumeApplication, TemplateId } from './types/application'
 import { downloadAtsPdf, pdfResultMessage } from './lib/exportPdf'
@@ -53,6 +53,8 @@ import {
   withTone,
 } from './lib/applicationFactory'
 import { sortJobsReverseChrono } from './lib/jobOrder'
+import { defaultFeaturedJobIds } from './lib/featuredJobs'
+import { extractKeywordsFromJd } from './lib/jdKeywords'
 import {
   emptyProfile,
   rebuildMasterBody,
@@ -85,7 +87,11 @@ const NAV_GROUPS: {
   items: { id: NavSection; label: string }[]
 }[] = [
   {
-    label: 'Build · resume order',
+    label: 'Apply now',
+    items: [{ id: 'apply', label: 'Apply' }],
+  },
+  {
+    label: 'Resume order',
     items: [
       { id: 'preview', label: '1 · Layout' },
       { id: 'contact', label: '2 · Contact' },
@@ -94,11 +100,11 @@ const NAV_GROUPS: {
       { id: 'jobs', label: '5 · Experience' },
       { id: 'education', label: '6 · Education' },
       { id: 'certs', label: '7 · Certs' },
-      { id: 'applications', label: '8 · This build' },
+      { id: 'applications', label: '8 · This resume' },
     ],
   },
   {
-    label: 'Tune this build',
+    label: 'Tune this resume',
     items: [
       { id: 'jd-tailor', label: 'JD keywords' },
       { id: 'internal-promo', label: 'Internal promo' },
@@ -122,8 +128,8 @@ export default function App() {
   const [activeAppId, setActiveAppId] = useState<string | null>(() =>
     loadActiveApplicationId(),
   )
-  /** Start at Layout so template choice leads the build path */
-  const [section, setSection] = useState<NavSection>('preview')
+  /** Apply-now first (empty device shows Import; bank present tailors). */
+  const [section, setSection] = useState<NavSection>('apply')
   /** Mobile bottom-nav "More" hub (vs a specific more-section form) */
   const [moreHub, setMoreHub] = useState(false)
   /** Mobile live resume sheet */
@@ -205,8 +211,6 @@ export default function App() {
       ),
     [activeApplication, profile.defaultIndustryPackId],
   )
-  const activePack = useMemo(() => getPack(activePackId), [activePackId])
-
   const resolved = useMemo(
     () => resolveResume(profile, activeApplication),
     [profile, activeApplication],
@@ -423,6 +427,9 @@ export default function App() {
         saveActiveApplicationId(result.activeApplicationId)
       }
       saveProfile(profileIn)
+      setShowGuide(false)
+      setMoreHub(false)
+      setSection('apply')
       setImportNotice(result.message)
       window.setTimeout(() => setImportNotice(null), 5000)
     } catch (e) {
@@ -444,7 +451,7 @@ export default function App() {
     path: OnboardPath
     internalCompany: string
     application: ResumeApplication | null
-    nextSection?: 'preview' | 'jobs' | 'applications' | 'summary'
+    nextSection?: 'preview' | 'jobs' | 'applications' | 'summary' | 'apply'
   }) => {
     markOnboardDone(opts.path, {
       internalCompany: opts.internalCompany,
@@ -459,7 +466,7 @@ export default function App() {
       saveActiveApplicationId(opts.application.applicationId)
     }
     setSection(
-      opts.nextSection ?? (opts.application ? 'applications' : 'jobs'),
+      opts.nextSection ?? (profile.jobs.length >= 1 ? 'apply' : 'jobs'),
     )
     setMoreHub(false)
     setShowGuide(false)
@@ -470,6 +477,7 @@ export default function App() {
     markOnboardDone(null, { skipped: true })
     setShowGuide(false)
     setGuideKind('pick')
+    setSection('apply')
   }
 
   const restartGuide = () => {
@@ -519,6 +527,12 @@ export default function App() {
       const label =
         draft.label.trim() ||
         defaultLabel(draft.targetTitle, draft.targetCompany, draft.mode)
+      const jd = draft.jobDescription.trim()
+      const keywords = jd
+        ? extractKeywordsFromJd(jd, {
+            packId: profile.defaultIndustryPackId,
+          })
+        : []
       let app = emptyApplication(profile, {
         label,
         mode: draft.mode,
@@ -527,19 +541,20 @@ export default function App() {
         includeProfessionalEmail: true,
         includeInternalEmail: draft.mode === 'internal',
         tone: draft.mode === 'internal' ? 'internal-promo' : 'ats-external',
-        templateId:
-          draft.mode === 'internal' ? 'internal-promotion' : 'ats-classic',
+        templateId: draft.templateId,
+        jobDescription: jd,
+        jdKeywords: keywords,
+        featuredJobIds: defaultFeaturedJobIds(profile.jobs),
       })
       if (draft.mode === 'internal') {
         app = withTone(app, 'internal-promo')
-        app = { ...app, label }
+        app = { ...app, label, templateId: draft.templateId }
       }
       setApps([app, ...applications])
       selectApp(app.applicationId)
       setNewBuildOpen(false)
       setMoreHub(false)
-      // Layout first → then operator walks Contact → Summary → Skills → …
-      setSection('preview')
+      setSection('apply')
       setLiveOpen(false)
       setVersionSaveFlash(true)
       window.setTimeout(() => setVersionSaveFlash(false), 1600)
@@ -601,6 +616,13 @@ export default function App() {
             onExport={exportFullBackup}
             onImportClick={() => fileRef.current?.click()}
             appsCount={applications.length}
+            jobCount={profile.jobs.length}
+            onAddJob={() => {
+              markOnboardDone(null, { skipped: true })
+              setShowGuide(false)
+              setGuideKind('pick')
+              setSection('jobs')
+            }}
           />
           <input
             ref={fileRef}
@@ -732,102 +754,23 @@ export default function App() {
             </div>
           </div>
 
-          <div className="hidden flex-wrap items-center gap-2 md:flex">
-            <span className="text-xs text-slate-500">
-              Jobs {jobCount} · builds {applications.length}
-            </span>
-            <span className="rounded-full border border-amber-800/50 bg-amber-950/40 px-2.5 py-0.5 text-xs font-medium text-amber-300/90">
-              {activePack.shortName}
-            </span>
-            <CtaButton
-              variant="primary"
-              className="min-h-10 font-semibold"
-              onClick={() => setNewBuildOpen(true)}
-              title="New resume for a role — master contact & jobs stay"
-            >
-              + New Build
-            </CtaButton>
-            <CtaButton
-              className="min-h-10"
-              onClick={() => setHowToOpen(true)}
-              title="How to use ResumeForge"
-            >
-              How to use
-            </CtaButton>
-            <a
-              href={GITHUB_REPO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rf-btn min-h-10 inline-flex items-center px-3 text-sm font-medium text-sky-200 hover:border-sky-600/50 hover:text-sky-100"
-              title={GITHUB_REPO_HINT}
-            >
-              GitHub
-            </a>
-            <CtaButton
-              className="min-h-10"
-              actionLabels={{
-                busy: 'Making PDF…',
-                done: 'PDF ready ✓',
-                error: 'PDF failed — try again',
-              }}
-              onAsyncClick={exportPdf}
-            >
-              PDF
-            </CtaButton>
-            <CtaButton
-              className="min-h-10"
-              actionLabels={{
-                busy: '…',
-                done: 'Exported ✓',
-                error: 'Export failed',
-              }}
-              onAsyncClick={async () => {
-                exportFullBackup()
-              }}
-            >
-              Export
-            </CtaButton>
-            <CtaButton
-              className="min-h-10"
-              onClick={() => fileRef.current?.click()}
-            >
-              Import
-            </CtaButton>
-            <CtaButton
-              variant="danger"
-              className="min-h-10"
-              onClick={resetProfile}
-            >
-              Reset
-            </CtaButton>
-          </div>
-
-          <div className="flex items-center gap-1.5 md:hidden">
-            <a
-              href={GITHUB_REPO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rf-btn min-h-11 min-w-11 inline-flex items-center justify-center px-2 text-xs font-semibold text-sky-200"
-              aria-label={GITHUB_REPO_LABEL}
-              title={GITHUB_REPO_HINT}
-            >
-              GH
-            </a>
+          <div className="flex items-center gap-1.5">
             <CtaButton
               variant="primary"
               className="min-h-11 px-3 text-sm font-bold"
               onClick={() => setNewBuildOpen(true)}
-              aria-label="New Build"
+              aria-label="New resume"
+              title="New resume for a role — master contact & jobs stay"
             >
-              + Build
+              + Resume
             </CtaButton>
             <CtaButton
               className="min-h-11 min-w-12 px-3 text-sm font-semibold"
               aria-label="Download PDF"
               actionLabels={{
-                busy: '…',
-                done: '✓',
-                error: 'Failed',
+                busy: 'Making PDF…',
+                done: 'PDF ready ✓',
+                error: 'PDF failed — try again',
               }}
               onAsyncClick={exportPdf}
             >
@@ -856,15 +799,21 @@ export default function App() {
       </header>
 
       <div className="mx-auto max-w-[1600px] px-3 pt-3 sm:px-4 sm:pt-4 no-print">
+        {jobCount === 0 && (
         <DeviceDataBanner
           compact
           onExport={exportFullBackup}
           onImportClick={() => fileRef.current?.click()}
           appsCount={applications.length}
+          jobCount={profile.jobs.length}
+          onAddJob={() => {
+            setMoreHub(false)
+            setSection('jobs')
+            setLiveOpen(false)
+          }}
         />
-        <div className="mt-2">
-          <MobileInstallBanner />
-        </div>
+        )}
+        {jobCount > 0 && (
         <div className="mt-2">
           <VersionSwitcher
             applications={applications}
@@ -873,7 +822,6 @@ export default function App() {
             onSelect={selectApp}
             onSaveCurrent={saveCurrentVersion}
             onCommitNamed={commitNamedVersion}
-            onNewBuild={() => setNewBuildOpen(true)}
             onManage={() => {
               setMoreHub(false)
               setSection('applications')
@@ -881,6 +829,8 @@ export default function App() {
             }}
           />
         </div>
+        )}
+        {section !== 'apply' && (
         <div className="mt-2">
           <BuildContinueBar
             activeLabel={activeApplication?.label ?? null}
@@ -895,9 +845,9 @@ export default function App() {
               setSection('preview')
               setLiveOpen(false)
             }}
-            onNewBuild={() => setNewBuildOpen(true)}
           />
         </div>
+        )}
         <NewBuildDialog
           open={newBuildOpen}
           onClose={() => setNewBuildOpen(false)}
@@ -908,32 +858,6 @@ export default function App() {
           open={howToOpen}
           onClose={() => setHowToOpen(false)}
         />
-        <p className="mt-2 text-center text-[11px] text-slate-400 lg:text-left">
-          Build live ·{' '}
-          <strong className="font-medium text-slate-300">
-            Clarity · Conciseness · Consistency
-          </strong>
-          {' · '}
-          you write language · templates set format
-          {' · '}
-          <button
-            type="button"
-            className="font-medium text-amber-400/90 underline-offset-2 hover:underline"
-            onClick={() => setHowToOpen(true)}
-          >
-            How to use
-          </button>
-          {' · '}
-          <a
-            href={GITHUB_REPO_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-sky-400/90 underline-offset-2 hover:underline"
-            title={GITHUB_REPO_HINT}
-          >
-            GitHub
-          </a>
-        </p>
       </div>
 
       {/* Desktop: nav | editor | live resume · Mobile: editor + live sheet */}
@@ -972,13 +896,12 @@ export default function App() {
               </ul>
             </div>
           ))}
-          <p className="mt-2 text-xs leading-relaxed text-slate-500">
-            Live paper updates as you type. Layouts lock template for a target —
-            3-C tips check craft, not a vendor ATS score.
+          <p className="mb-1.5 mt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+            This device
           </p>
           <button
             type="button"
-            className="rf-btn rf-btn-primary mt-3 w-full text-xs"
+            className="rf-btn w-full text-xs"
             onClick={() => setHowToOpen(true)}
           >
             How to use
@@ -987,29 +910,29 @@ export default function App() {
             href={GITHUB_REPO_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rf-btn mt-2 flex w-full items-center justify-center text-xs font-medium text-sky-200"
+            className="rf-btn mt-1 flex w-full items-center justify-center text-xs font-medium text-sky-200"
             title={GITHUB_REPO_HINT}
           >
             {GITHUB_REPO_LABEL}
           </a>
           <button
             type="button"
-            className="rf-btn mt-2 w-full text-xs"
-            onClick={startLeverage}
+            className="rf-btn mt-1 w-full text-xs"
+            onClick={() => fileRef.current?.click()}
           >
-            Target-first leverage
+            Import backup
           </button>
           <button
             type="button"
-            className="rf-btn mt-2 w-full text-xs"
-            onClick={restartGuide}
+            className="rf-btn mt-1 w-full text-xs"
+            onClick={exportFullBackup}
           >
-            Restart setup (choose path)
+            Export backup
           </button>
         </nav>
 
         <div className="min-w-0 space-y-3">
-          {!moreHub && (
+          {!moreHub && section !== 'apply' && (
             <div className="no-print lg:hidden">
               <BuildStepTabs
                 section={section}
@@ -1043,6 +966,25 @@ export default function App() {
               />
             ) : (
               <>
+                {section === 'apply' && (
+                  <ApplyNowPanel
+                    profile={profile}
+                    application={activeApplication}
+                    onApplicationChange={patchActiveApp}
+                    onNewResume={() => setNewBuildOpen(true)}
+                    onOpenJobs={() => {
+                      setMoreHub(false)
+                      setSection('jobs')
+                    }}
+                    onOpenLayouts={() => {
+                      setMoreHub(false)
+                      setSection('preview')
+                    }}
+                    onOpenLive={openLiveSheet}
+                    onExportPdf={exportPdf}
+                    onImportClick={() => fileRef.current?.click()}
+                  />
+                )}
                 {section === 'preview' && (
                   <PreviewPanel
                     profile={profile}
@@ -1079,6 +1021,22 @@ export default function App() {
                       setSection('skills')
                     }}
                     onNewBuild={() => setNewBuildOpen(true)}
+                    onOpenApply={() => {
+                      setMoreHub(false)
+                      setSection('apply')
+                    }}
+                    onExportPdf={async (app) => {
+                      selectApp(app.applicationId)
+                      setPdfNotice(null)
+                      const result = await downloadAtsPdf(
+                        resolveResume(profile, app),
+                      )
+                      const msg = pdfResultMessage(result)
+                      if (msg) {
+                        setPdfNotice(msg)
+                        window.setTimeout(() => setPdfNotice(null), 9000)
+                      }
+                    }}
                   />
                 )}
                 {section === 'jd-tailor' && (
@@ -1167,12 +1125,26 @@ export default function App() {
                   <JobsPanel
                     jobs={profile.jobs}
                     onChange={(jobs) => update({ jobs })}
+                    featuredJobIds={activeApplication?.featuredJobIds ?? []}
+                    onFeaturedChange={(featuredJobIds) => {
+                      if (activeApplication) {
+                        patchActiveApp(
+                          touchApplication({
+                            ...activeApplication,
+                            featuredJobIds,
+                          }),
+                        )
+                        return
+                      }
+                      const app = emptyApplication(profile, {
+                        label: 'Working draft',
+                        featuredJobIds,
+                      })
+                      setApps([app, ...applications])
+                      selectApp(app.applicationId)
+                    }}
                     onRebuildJobs={rebuildJobsOnly}
                     onRebuildCareerBody={rebuildCareerBody}
-                    onOpenVersions={() => {
-                      setMoreHub(false)
-                      setSection('applications')
-                    }}
                   />
                 )}
                 {section === 'skills' && (

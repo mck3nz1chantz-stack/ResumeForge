@@ -147,7 +147,7 @@ export function PreviewPanel({
             Start here — pick the structure that shapes the whole resume. Then
             walk Contact → Summary → Skills → Experience (resume order).
             {application
-              ? ` · Build: ${application.label || 'Untitled'}`
+              ? ` · Resume: ${application.label || 'Untitled'}`
               : ' · Creating a draft if you need one'}
           </p>
         </div>
@@ -196,13 +196,16 @@ export function PreviewPanel({
         </div>
       </header>
 
+      {profile.jobs.length > 0 && (
       <div className="no-print space-y-3">
         <ThreeCBar report={threeC} />
         <EyePathCoach
           scanMode={scanMode}
           onScanModeChange={setScanMode}
         />
-        {pdfNotice && (
+      </div>
+      )}
+      {pdfNotice && (
           <p
             role="status"
             className="rounded-lg border border-amber-800/50 bg-amber-950/40 px-3 py-2 text-xs leading-relaxed text-amber-100"
@@ -210,7 +213,6 @@ export function PreviewPanel({
             {pdfNotice}
           </p>
         )}
-      </div>
 
       {application && toneSuggestion?.differsFromCurrent && (
         <div className="no-print">

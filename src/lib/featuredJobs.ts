@@ -98,6 +98,23 @@ export function selectCurrentEmployerJobs(
   return ids
 }
 
+/** Apply-now default: current employer plus up to two more (newest first). */
+export function defaultFeaturedJobIds(
+  jobs: { id: string; isCurrentEmployer?: boolean }[],
+): string[] {
+  const allIds = jobs.map((j) => j.id)
+  if (allIds.length === 0) return []
+  const picks: string[] = []
+  for (const j of jobs) {
+    if (j.isCurrentEmployer && !picks.includes(j.id)) picks.push(j.id)
+  }
+  for (const j of jobs) {
+    if (picks.length >= 3) break
+    if (!picks.includes(j.id)) picks.push(j.id)
+  }
+  return toFeaturedJobIds(picks, allIds)
+}
+
 /**
  * Apply featured filter for resolve/PDF.
  * Empty featured → all jobs. FEATURED_NONE → none. Else match ids.

@@ -1,5 +1,12 @@
 import type { TemplateId, TemplateMeta } from '../types/application'
 
+/** RF.1 Apply-now featured layouts (full gallery stays on Layout). */
+export const FEATURED_TEMPLATE_IDS: TemplateId[] = [
+  'ats-classic',
+  'professional-compact',
+  'internal-promotion',
+]
+
 /** Full professional stack — all single-column ATS-safe. */
 export const TEMPLATES: TemplateMeta[] = [
   {

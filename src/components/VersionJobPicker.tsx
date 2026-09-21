@@ -58,7 +58,7 @@ export function VersionJobPicker({
           </h3>
           <p className="mt-1 text-xs leading-relaxed text-slate-500">
             Master bank holds every role. Check only what belongs on{' '}
-            <strong className="font-medium text-slate-400">this version</strong>
+            <strong className="font-medium text-slate-400">this resume</strong>
             {total > 0 ? (
               <>
                 {' '}

@@ -12,7 +12,7 @@ export const RESUME_FLOW: { id: NavSection; label: string; short: string }[] = [
   { id: 'jobs', label: '5 · Experience', short: 'Experience' },
   { id: 'education', label: '6 · Education', short: 'Edu' },
   { id: 'certs', label: '7 · Certs', short: 'Certs' },
-  { id: 'applications', label: '8 · This build', short: 'Build' },
+  { id: 'applications', label: '8 · This resume', short: 'Resume' },
 ]
 
 /** Extra steps when a build is active (target tools). */

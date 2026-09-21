@@ -6,8 +6,8 @@
 
 set -e
 PORT=5181
-ROOT="/Users/kenzi/Desktop/ChantzMediaProjects/ResumeForge"
-DESKTOP_SHORTCUT="/Users/kenzi/Desktop/ResumeForge.command"
+ROOT="/Users/kenzi/ChantzMedia/ChantzMediaProjects/ResumeForge"
+DESKTOP_SHORTCUT=""
 VERSION="0.3.1"
 
 cd "$ROOT" || {
@@ -15,18 +15,7 @@ cd "$ROOT" || {
   exit 1
 }
 
-sync_desktop_shortcut() {
-  cat > "$DESKTOP_SHORTCUT" <<EOF
-#!/bin/zsh
-# Desktop → ResumeForge ${VERSION}
-# Auto-refreshed by Open ResumeForge.command — do not hand-edit.
-# SSOT: ${ROOT}/Open ResumeForge.command
-exec "${ROOT}/Open ResumeForge.command"
-EOF
-  chmod +x "$DESKTOP_SHORTCUT"
-}
-
-sync_desktop_shortcut
+# App SSOT is ChantzMediaProjects (not iCloud Desktop). No Desktop shortcut write.
 
 kill_port_server() {
   local pids

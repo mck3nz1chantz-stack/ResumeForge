@@ -60,7 +60,7 @@ export function VersionSkillPicker({
           </h3>
           <p className="mt-1 text-xs leading-relaxed text-slate-500">
             Master bank holds every skill. Check only what belongs on{' '}
-            <strong className="font-medium text-slate-400">this build</strong>
+            <strong className="font-medium text-slate-400">this resume</strong>
             {total > 0 ? (
               <>
                 {' '}

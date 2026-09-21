@@ -29,8 +29,8 @@ export function SummaryPanel({ summary, onChange, packId }: Props) {
           </h2>
           <p className="text-sm text-slate-400">
             Right under your name on the resume — not buried. Base text for the
-            master profile; each build can override under{' '}
-            <strong className="font-medium text-slate-300">This build</strong>.
+            master profile; each resume can override under{' '}
+            <strong className="font-medium text-slate-300">This resume</strong>.
           </p>
           {/* One-line formula — full examples live in the tip only */}
           <p className="mt-2 text-xs leading-relaxed text-slate-500">

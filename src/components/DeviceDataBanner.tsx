@@ -13,22 +13,85 @@ type Props = {
   onExport: () => void
   onImportClick: () => void
   compact?: boolean
-  /** Shown under primary backup actions (e.g. app count) */
+  /** Saved resume iterations on this browser */
   appsCount?: number
+  /** Master job bank size on this browser */
+  jobCount?: number
+  /** Jump to Jobs to type a role on an empty device */
+  onAddJob?: () => void
+}
+
+function deviceCountLine(jobCount: number, appsCount: number): string {
+  const jobs = `${jobCount} job${jobCount === 1 ? '' : 's'}`
+  const resumes = `${appsCount} resume${appsCount === 1 ? '' : 's'}`
+  return `${jobs} · ${resumes}`
 }
 
 /**
- * Privacy-first banner — on-device storage, no cloud for resume content.
- * Export = full backup (profile + applications) you control.
+ * Privacy + device-bank honesty. Empty browsers lead with Import backup.
+ * Mac and phone do not share localStorage.
  */
 export function DeviceDataBanner({
   onExport,
   onImportClick,
   compact,
   appsCount = 0,
+  jobCount = 0,
+  onAddJob,
 }: Props) {
-  const [open, setOpen] = useState(!compact)
+  const empty = jobCount === 0
+  const [open, setOpen] = useState(!compact || empty)
   const compactFlash = usePressFlash(280)
+  const counts = deviceCountLine(jobCount, appsCount)
+
+  if (empty) {
+    return (
+      <div
+        className="no-print rounded-xl border border-amber-800/50 bg-amber-950/25 p-3 sm:p-4"
+        role="status"
+      >
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-500/90">
+          This device is empty
+        </p>
+        <h2 className="mt-1 text-base font-semibold text-slate-50">
+          Import your job bank to apply from here
+        </h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-slate-300">
+          Resume data stays in <strong className="font-medium text-slate-200">this
+          browser only</strong>. A phone does not see jobs you entered on a
+          computer until you move a backup file.
+        </p>
+        <ol className="mt-3 list-inside list-decimal space-y-1 text-sm text-slate-400">
+          <li>
+            On the computer:{' '}
+            <strong className="text-slate-200">Export full backup</strong> (JSON)
+          </li>
+          <li>AirDrop, Files, USB, or email that file to this phone</li>
+          <li>
+            Here: <strong className="text-slate-200">Import backup</strong> —
+            then Apply uses your jobs
+          </li>
+        </ol>
+        <p className="mt-2 text-xs text-slate-500">
+          This device: {counts}
+        </p>
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+          <CtaButton
+            variant="primary"
+            className="min-h-12 flex-1 font-semibold"
+            onClick={onImportClick}
+          >
+            Import backup
+          </CtaButton>
+          {onAddJob ? (
+            <CtaButton className="min-h-12 flex-1" onClick={onAddJob}>
+              Add a job
+            </CtaButton>
+          ) : null}
+        </div>
+      </div>
+    )
+  }
 
   if (compact && !open) {
     return (
@@ -42,12 +105,15 @@ export function DeviceDataBanner({
         }}
       >
         <span>
-          <strong className="font-semibold text-emerald-200/95">
+          <span className="lg:hidden">
+            This phone: {counts}
+          </span>
+          <span className="hidden lg:inline">
+            This device: {counts}
+          </span>
+          <span className="mt-0.5 block text-[11px] text-slate-400">
             {PRIVACY_COMPACT_LINE}
-          </strong>
-          {appsCount > 0
-            ? ` · ${appsCount} build${appsCount === 1 ? '' : 's'} here`
-            : ''}
+          </span>
         </span>
         <span className="shrink-0 font-medium text-amber-300/90 underline decoration-amber-600/40 underline-offset-2">
           Privacy & backup →
@@ -62,6 +128,10 @@ export function DeviceDataBanner({
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-emerald-100">
             {PRIVACY_HEADLINE}
+          </p>
+          <p className="mt-1 text-xs font-medium text-slate-200">
+            <span className="lg:hidden">This phone: {counts}</span>
+            <span className="hidden lg:inline">This device: {counts}</span>
           </p>
           <p className="mt-1 text-xs leading-relaxed text-slate-300">
             {PRIVACY_SHORT}
@@ -88,12 +158,6 @@ export function DeviceDataBanner({
               other device — still local there
             </li>
           </ol>
-          {appsCount > 0 && (
-            <p className="mt-1.5 text-[11px] text-slate-500">
-              This device currently holds {appsCount} saved build
-              {appsCount === 1 ? '' : 's'} plus your master profile.
-            </p>
-          )}
         </div>
         {compact && (
           <CtaButton className="text-xs" onClick={() => setOpen(false)}>

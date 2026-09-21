@@ -1,66 +1,46 @@
 {
   "project": "ResumeForge",
-  "workspace": "~/Desktop/ChantzMediaProjects/ResumeForge",
-  "programSsot": "~/Desktop/ChantzMediaLauncher/products/resume-forge/",
-  "skill": "ResumeForge · skills/resume-forge",
-  "lastUpdated": "2026-07-26",
-  "currentSlice": "Path A locked — architecture SSOT + live",
-  "nextSlice": "Optional: token polish in pdfSkin.ts only if a color is off; Path B dual Visual PDF only if operator still wants CSS-band pixel match. No re-scaffold.",
+  "workspace": "~/ChantzMedia/ChantzMediaProjects/ResumeForge",
+  "programSsot": "~/ChantzMedia/ChantzMediaLauncher/products/resume-forge/",
+  "skill": "ResumeForge · ~/.grok/skills/resume-forge/SKILL.md",
+  "lastUpdated": "2026-09-21",
+  "currentSlice": "RF.6 residual chrome — Builds→Resumes, This resume, collapsed editor",
+  "nextSlice": "Later optional: DOCX, opt-in LLM rewrite. No new RF slice unless named.",
   "deploy": {
     "liveUrl": "https://resumeforge-81d.pages.dev/",
-    "lastDeployHash": "7ce3bac7",
-    "previewUrl": "https://7ce3bac7.resumeforge-81d.pages.dev",
+    "lastDeployHash": "5843aee9",
     "projectName": "resumeforge",
     "command": "npm run deploy:pages",
     "approval": "APPROVED — preview deploy | approved - deploy",
-    "pendingDeploy": false
+    "pendingDeploy": false,
+    "note": "RF.0–RF.6 live 2026-09-21 — https://resumeforge-81d.pages.dev/"
   },
   "dev": {
     "port": 5181,
-    "command": "npm run dev",
-    "opener": "Open ResumeForge.command"
+    "command": "cd ~/ChantzMedia/ChantzMediaProjects/ResumeForge && npm run dev",
+    "opener": "Open ResumeForge.command (ROOT is ChantzMediaProjects)"
   },
   "criticalNotes": [
-    "App code ONLY under ChantzMediaProjects/ResumeForge — never under $LAUNCHER",
-    "3-C = Clarity · Conciseness · Consistency (NOT Compelling)",
-    "Never invent metrics; scaffolds use [brackets]",
-    "ATS default = single-column; skins are CSS signatures not multi-column",
-    "PDF SSOT: docs/PDF_ARCHITECTURE.md — read before any export/preview change",
-    "PDF ARCHITECTURE: Download PDF = jsPDF TEXT + Path A skin draw (exportPdf.ts → exportPdfText.ts + pdfSkin.ts)",
-    "Path A locked: templateId → RGB tokens (header rules, section rules, filled bullet discs, ops rail, internal banner). Selectable text preserved.",
-    "Path B (Visual PDF html2canvas secondary CTA) NOT shipped — only if operator still wants pixel CSS bands after Path A",
-    "Print = full browser CSS skins (gradients/bands exact WYSIWYG)",
-    "Live paper locked to .ats-letter-paper 816px; zoom is transform:scale only (no reflow)",
-    "html2canvas was RETIRED as primary (screenshot ≠ ATS resume)",
-    "Do NOT re-scaffold; do not invent parallel export apps",
-    "printPrefs on Application: typeScale sm|md|lg, nameStyle sans|serif, pageDensity roomy|balanced|compact",
-    "Deploy gate: approved - deploy · PERMISSIONS.md § Cloudflare/Wrangler"
+    "App code ONLY under ~/ChantzMedia/ChantzMediaProjects/ResumeForge — never Desktop/iCloud, never $LAUNCHER",
+    "GitHub remote: mck3nz1chantz-stack/ResumeForge",
+    "localStorage does not sync phone↔Mac — Export/Import JSON (RF.2)",
+    "PDF SSOT: docs/PDF_ARCHITECTURE.md — Download PDF = jsPDF text + Path A skin",
+    "Never invent metrics; no account/cloud resume sync",
+    "GuiPass spec: docs/GUI_PASS_STREAMLINE_2026-09-21.md",
+    "3-C = Clarity · Conciseness · Consistency"
   ],
-  "openIssues": [],
-  "closedThisEra": [
-    "PDF letter structure (margins, title|dates, multi-page not mid-strip)",
-    "Letter-locked preview 816px",
-    "printPrefs locked dials",
-    "Eye-path coach + scan mode",
-    "Lint clean (0 warnings)",
-    "html2canvas primary retired after expert audit",
-    "Path A skin-aware Download PDF (pdfSkin + draw rules/bullets)",
-    "Path A deployed 7ce3bac7",
-    "pdf-visual-aesthetics-verify closed (operator accepted Path A)",
-    "docs/PDF_ARCHITECTURE.md locked SSOT"
+  "openIssues": [
+    "Pages live with RF.0–RF.6 (hash 5843aee9)",
+    "RF.6 landed locally: Builds→Resumes, This resume, Edit details collapse",
+    "Optional later: DOCX, LLM rewrite (explicit opt-in only)"
   ],
   "sliceStatuses": {
-    "phase0-7": "done",
-    "polish-p0-p1": "done",
-    "leverage-offline": "done",
-    "template-visual-skins": "done-deploy-e25dd935",
-    "letter-locked-preview": "done-deploy-bbacff92",
-    "ats-text-pdf-primary": "done-deploy-bbacff92",
-    "pdf-visual-skin-parity": "done-deploy-7ce3bac7-locked"
-  },
-  "recommendedAgents": [
-    "debug-desk — only if export regresses",
-    "Do NOT re-scaffold; app path ChantzMediaProjects/ResumeForge only",
-    "Read docs/PDF_ARCHITECTURE.md before any PDF/preview work"
-  ]
+    "RF.0": "done",
+    "RF.1": "done",
+    "RF.2": "done",
+    "RF.3": "done",
+    "RF.4": "done",
+    "RF.5": "done",
+    "RF.6": "done"
+  }
 }

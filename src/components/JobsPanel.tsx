@@ -1,5 +1,13 @@
+import { useState } from 'react'
 import type { Job, Metric } from '../types/profile'
 import { scaffoldFor } from '../data/expertScaffolds'
+import {
+  FEATURED_NONE,
+  isJobSelected,
+  masterJobIds,
+  toggleJobSelection,
+} from '../lib/featuredJobs'
+import { formatDateRange } from '../lib/formatDates'
 import { sortJobsReverseChrono } from '../lib/jobOrder'
 import { emptyJob } from '../lib/profileFactory'
 import { RoleMemories } from './RoleMemories'
@@ -10,21 +18,24 @@ import { TagInput } from './TagInput'
 type Props = {
   jobs: Job[]
   onChange: (jobs: Job[]) => void
+  featuredJobIds: string[]
+  onFeaturedChange: (featuredJobIds: string[]) => void
   /** Clear jobs only — keep contact + rest of master */
   onRebuildJobs?: () => void
   /** Clear jobs + skills + summary — keep contact / education / certs */
   onRebuildCareerBody?: () => void
-  /** Jump to Versions to pick jobs for a resume */
-  onOpenVersions?: () => void
 }
 
 export function JobsPanel({
   jobs,
   onChange,
+  featuredJobIds,
+  onFeaturedChange,
   onRebuildJobs,
   onRebuildCareerBody,
-  onOpenVersions,
 }: Props) {
+  const allIds = masterJobIds(jobs)
+
   const commit = (next: Job[]) => {
     onChange(sortJobsReverseChrono(next))
   }
@@ -38,63 +49,42 @@ export function JobsPanel({
   }
 
   const add = () => {
-    // New shell sorts to top until dates make it older (blank end = Present)
-    commit([emptyJob(), ...jobs])
+    const j = emptyJob()
+    commit([j, ...jobs])
+    const featured = featuredJobIds.filter(Boolean)
+    if (featured.length > 0 && !featured.includes(FEATURED_NONE)) {
+      onFeaturedChange([...featured, j.id])
+    }
+  }
+
+  const toggleOnResume = (jobId: string) => {
+    onFeaturedChange(toggleJobSelection(jobId, featuredJobIds, allIds))
   }
 
   return (
     <div className="space-y-4">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <h2 className="text-lg font-semibold text-slate-50">
-            Step 5 · Experience
-          </h2>
+          <h2 className="text-lg font-semibold text-slate-50">Jobs</h2>
           <p className="text-sm text-slate-400">
-            Master job bank — store{' '}
-            <strong className="font-medium text-slate-300">every</strong> role
-            (internal + external). Order is{' '}
-            <strong className="font-medium text-slate-300">
-              reverse chronological by dates
-            </strong>{' '}
-            (newest / current first) — not the order you typed them. Each build
-            checkboxes which jobs print; nothing is deleted when you uncheck a
-            role on one build.
+            One list: edit a role, or switch{' '}
+            <strong className="font-medium text-slate-300">On this resume</strong>{' '}
+            to print it. Unchecked roles stay in your bank.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <SectionGuide guideId="jobs" />
-          <button type="button" className="rf-btn rf-btn-primary" onClick={add}>
+          <button
+            type="button"
+            className="rf-btn rf-btn-primary min-h-11"
+            onClick={add}
+          >
             + Add job
           </button>
         </div>
       </header>
 
-      <div className="rounded-xl border border-slate-700 bg-slate-900/50 p-3">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-          How this works
-        </p>
-        <ol className="mt-1.5 list-inside list-decimal space-y-1 text-xs text-slate-400">
-          <li>
-            Contact (name, phone, emails) lives on the Contact tab — stable
-            identity.
-          </li>
-          <li>
-            Add all jobs to this bank (manufacturing, retail, etc. — keep them).
-          </li>
-          <li>
-            On each version, check only the jobs for that application.
-          </li>
-        </ol>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {onOpenVersions && (
-            <button
-              type="button"
-              className="rf-btn rf-btn-primary min-h-10 text-xs"
-              onClick={onOpenVersions}
-            >
-              Pick jobs for this build →
-            </button>
-          )}
+      <div className="flex flex-wrap gap-2">
           {onRebuildJobs && (
             <button
               type="button"
@@ -116,7 +106,6 @@ export function JobsPanel({
             </button>
           )}
         </div>
-      </div>
 
       {scaffoldFor('jobs') && (
         <SectionCoach
@@ -149,6 +138,8 @@ export function JobsPanel({
             key={job.id}
             job={job}
             index={index}
+            onResume={isJobSelected(job.id, featuredJobIds, allIds)}
+            onToggleOnResume={() => toggleOnResume(job.id)}
             onChange={(patch) => update(job.id, patch)}
             onRemove={() => remove(job.id)}
           />
@@ -161,14 +152,24 @@ export function JobsPanel({
 function JobCard({
   job,
   index,
+  onResume,
+  onToggleOnResume,
   onChange,
   onRemove,
 }: {
   job: Job
   index: number
+  onResume: boolean
+  onToggleOnResume: () => void
   onChange: (patch: Partial<Job>) => void
   onRemove: () => void
 }) {
+  const [open, setOpen] = useState(
+    !job.title.trim() && !job.company.trim(),
+  )
+  const heading =
+    [job.title, job.company].filter(Boolean).join(' @ ') || `Role ${index + 1}`
+  const dates = formatDateRange(job.start, job.end)
   const setBullet = (i: number, value: string) => {
     const bullets = [...job.bullets]
     bullets[i] = value
@@ -193,14 +194,40 @@ function JobCard({
     onChange({ metrics: job.metrics.filter((_, idx) => idx !== i) })
 
   return (
-    <article className="rf-card space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold text-amber-400/90">
-          Role {index + 1}
-          {job.title || job.company
-            ? ` · ${[job.title, job.company].filter(Boolean).join(' @ ')}`
-            : ''}
-        </h3>
+    <article className="rf-card space-y-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          className="min-h-11 min-w-11 shrink-0 rounded-lg border border-slate-700 text-slate-300"
+          aria-expanded={open}
+          aria-label={open ? 'Collapse job details' : 'Edit bullets and details'}
+          onClick={() => setOpen((v) => !v)}
+        >
+          {open ? '▾' : '▸'}
+        </button>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-sm font-semibold text-slate-50">{heading}</h3>
+          <p className="text-xs text-slate-500">
+            {dates || 'Dates'}
+            {job.location?.trim() ? ` · ${job.location.trim()}` : ''}
+            {job.isCurrentEmployer ? ' · current' : ''}
+          </p>
+        </div>
+        <label className="flex min-h-11 min-w-[9.5rem] cursor-pointer items-center justify-end gap-2 text-xs font-medium text-slate-200 touch-manipulation">
+          <span>On this resume</span>
+          <input
+            type="checkbox"
+            role="switch"
+            className="size-5 shrink-0 rounded border-slate-600 bg-slate-900 text-amber-500"
+            checked={onResume}
+            onChange={onToggleOnResume}
+          />
+        </label>
+      </div>
+
+      {open && (
+      <div className="space-y-4 border-t border-slate-800 pt-3">
+      <div className="flex justify-end">
         <button type="button" className="rf-btn rf-btn-danger text-xs" onClick={onRemove}>
           Remove
         </button>
@@ -453,6 +480,8 @@ function JobCard({
           ))}
         </div>
       </div>
+      </div>
+      )}
     </article>
   )
 }

@@ -168,6 +168,7 @@ export function LivePreviewPane({
               {view.contact.name.trim() || 'Your name'} · {template.short}
               {view.targetTitle ? ` · ${view.targetTitle}` : ''}
             </p>
+            {!emptyish && (
             <div className="mt-1 flex gap-1" aria-hidden>
               {threeC.items.map((item) => {
                 const st = craftStatusLabel(item)
@@ -186,11 +187,14 @@ export function LivePreviewPane({
                 )
               })}
             </div>
+            )}
           </div>
         </div>
         <span className="shrink-0 rounded-full border border-slate-700 bg-slate-900 px-2.5 py-1 text-[11px] font-medium text-slate-200">
           {expanded ? 'Hide' : 'Open'}
+          {!emptyish && (
           <span className="ml-1 text-slate-500">· {overall}</span>
+          )}
         </span>
       </button>
     )
@@ -351,7 +355,7 @@ export function LivePreviewPane({
         )}
       </div>
 
-      {/* Craft below paper */}
+      {!emptyish && (
       <div className="no-print shrink-0 space-y-1.5">
         <EyePathCoach
           compact
@@ -360,6 +364,7 @@ export function LivePreviewPane({
         />
         <ThreeCBar report={threeC} compact />
       </div>
+      )}
 
       <p className="text-[10px] leading-relaxed text-slate-500 no-print">
         {guidance.message} {guidance.tip} · Letter paper 8.5″ · PDF =

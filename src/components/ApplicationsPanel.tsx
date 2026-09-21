@@ -9,7 +9,6 @@ import {
   withMode,
   withTone,
 } from '../lib/applicationFactory'
-import { downloadApplicationJson } from '../lib/applicationStorage'
 import { scaffoldFor } from '../data/expertScaffolds'
 import { listPacks } from '../data/packs'
 import { suggestTone } from '../lib/suggestTone'
@@ -20,6 +19,8 @@ import { TonePicker } from './TonePicker'
 import { ToneSuggestBanner } from './ToneSuggestBanner'
 import { VersionJobPicker } from './VersionJobPicker'
 import { VersionSkillPicker } from './VersionSkillPicker'
+import { resolveResume } from '../lib/resolveResume'
+import { ResumeDocument } from './ResumeDocument'
 
 type Props = {
   profile: ResumeProfile
@@ -37,6 +38,8 @@ type Props = {
   onOpenSkills?: () => void
   /** Open the primary New Build dialog */
   onNewBuild?: () => void
+  onOpenApply?: () => void
+  onExportPdf?: (app: ResumeApplication) => Promise<void>
 }
 
 export function ApplicationsPanel({
@@ -51,8 +54,11 @@ export function ApplicationsPanel({
   onOpenJobs,
   onOpenSkills,
   onNewBuild,
+  onOpenApply,
+  onExportPdf,
 }: Props) {
   const active = applications.find((a) => a.applicationId === activeId) ?? null
+  const [compareIds, setCompareIds] = useState<string[]>([])
 
   const create = (partial?: Partial<ResumeApplication>) => {
     const app = emptyApplication(profile, partial)
@@ -71,7 +77,7 @@ export function ApplicationsPanel({
   }
 
   const remove = (id: string) => {
-    if (!confirm('Delete this resume version?')) return
+    if (!confirm('Delete this resume?')) return
     const next = applications.filter((a) => a.applicationId !== id)
     onChangeApps(next)
     if (activeId === id) onSelect(next[0]?.applicationId ?? null)
@@ -79,6 +85,7 @@ export function ApplicationsPanel({
 
   const [dupFlash, setDupFlash] = useState<string | null>(null)
   const [toneDismissedFor, setToneDismissedFor] = useState<string | null>(null)
+  const [detailsOpen, setDetailsOpen] = useState(false)
 
   const dup = (app: ResumeApplication) => {
     const copy = duplicateApplication(app)
@@ -107,13 +114,11 @@ export function ApplicationsPanel({
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <h2 className="text-lg font-semibold text-slate-50">
-            Step 8 · This build
+            Resumes
           </h2>
           <p className="text-sm text-slate-400">
-            After the content bank: pick jobs &amp; skills for this resume,
-            emails, tone, and summary override. Start a fresh target with{' '}
-            <strong className="font-medium text-amber-200/90">+ New Build</strong>
-            .
+            Named iterations for different postings. Open one to tailor, duplicate
+            to try another cut, PDF to share.
           </p>
         </div>
         <SectionGuide guideId="applications" />
@@ -123,7 +128,7 @@ export function ApplicationsPanel({
             className="rf-btn rf-btn-primary min-h-11 flex-1 touch-manipulation text-sm font-semibold sm:min-h-10 sm:flex-none"
             onClick={() => (onNewBuild ? onNewBuild() : create())}
           >
-            + New Build
+            + New resume
           </button>
           <button
             type="button"
@@ -151,10 +156,9 @@ export function ApplicationsPanel({
 
       {applications.length === 0 ? (
         <div className="rf-card text-sm text-slate-400">
-          No builds yet. Press{' '}
-          <strong className="font-medium text-amber-200/90">+ New Build</strong>{' '}
-          (header or above) for each role — e.g. “Supervisor — Acme”. Your master
-          job bank stays shared; you pick jobs per build.
+          No resumes yet. Press{' '}
+          <strong className="font-medium text-amber-200/90">+ New resume</strong>{' '}
+          for each posting. Your job bank stays shared.
         </div>
       ) : (
         <ul className="space-y-2">
@@ -183,37 +187,72 @@ export function ApplicationsPanel({
                     ) : null}
                   </p>
                   <p className="text-xs text-slate-500">
-                    {TEMPLATES.find((t) => t.id === app.templateId)?.name ??
-                      app.templateId}
-                    {' · '}
-                    {app.mode}
-                    {app.targetTitle ? ` · ${app.targetTitle}` : ''}
+                    {[
+                      app.targetCompany,
+                      app.targetTitle,
+                      TEMPLATES.find((t) => t.id === app.templateId)?.name,
+                      app.updatedAt
+                        ? new Date(app.updatedAt).toLocaleDateString(undefined, {
+                            month: 'short',
+                            day: 'numeric',
+                          })
+                        : null,
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')}
                   </p>
                 </button>
-                <div className="flex shrink-0 gap-1">
+                <label className="hidden min-h-11 items-center gap-1 text-[11px] text-slate-400 lg:flex">
+                  <input
+                    type="checkbox"
+                    className="size-4 rounded border-slate-600"
+                    checked={compareIds.includes(app.applicationId)}
+                    onChange={() => {
+                      setCompareIds((ids) => {
+                        if (ids.includes(app.applicationId)) {
+                          return ids.filter((id) => id !== app.applicationId)
+                        }
+                        if (ids.length >= 2) return [ids[1], app.applicationId]
+                        return [...ids, app.applicationId]
+                      })
+                    }}
+                  />
+                  Compare
+                </label>
+                <div className="grid w-full grid-cols-2 gap-1 sm:flex sm:w-auto sm:shrink-0">
                   <button
                     type="button"
-                    className="rf-btn text-xs"
-                    title="Duplicate this application (all JD / cover / pin fields)"
+                    className="rf-btn min-h-11 text-xs"
+                    onClick={() => {
+                      onSelect(app.applicationId)
+                      onOpenApply?.()
+                    }}
+                  >
+                    Open
+                  </button>
+                  <button
+                    type="button"
+                    className="rf-btn min-h-11 text-xs"
+                    title="Duplicate this resume"
                     onClick={() => dup(app)}
                   >
-                    Dup
+                    Duplicate
                   </button>
                   <button
                     type="button"
-                    className="rf-btn text-xs"
-                    title="Download this application only"
-                    onClick={() => downloadApplicationJson(app)}
+                    className="rf-btn min-h-11 text-xs"
+                    title="Download PDF"
+                    onClick={() => void onExportPdf?.(app)}
                   >
-                    JSON
+                    PDF
                   </button>
                   <button
                     type="button"
-                    className="rf-btn rf-btn-danger text-xs"
-                    title="Delete application"
+                    className="rf-btn rf-btn-danger min-h-11 text-xs"
+                    title="Delete resume"
                     onClick={() => remove(app.applicationId)}
                   >
-                    Del
+                    Delete
                   </button>
                 </div>
               </li>
@@ -222,11 +261,53 @@ export function ApplicationsPanel({
         </ul>
       )}
 
-      {active && (
+      {compareIds.length === 2 && (
+        <div className="hidden gap-3 lg:grid lg:grid-cols-2">
+          {compareIds.map((id) => {
+            const app = applications.find((a) => a.applicationId === id)
+            if (!app) return null
+            const view = resolveResume(profile, app)
+            return (
+              <div
+                key={id}
+                className="overflow-hidden rounded-xl border border-slate-800 bg-slate-950/40 p-2"
+              >
+                <p className="mb-2 truncate text-xs font-medium text-slate-300">
+                  {app.label}
+                </p>
+                <div className="origin-top scale-[0.42] [width:816px]">
+                  <ResumeDocument view={view} />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {active && !detailsOpen && (
+        <button
+          type="button"
+          className="rf-btn min-h-11 w-full text-sm"
+          onClick={() => setDetailsOpen(true)}
+        >
+          Edit details · {active.label || 'Untitled'}
+        </button>
+      )}
+
+      {active && detailsOpen && (
         <div className="rf-card space-y-4">
-          <h3 className="text-sm font-semibold text-amber-300/90">
-            Edit: {active.label || 'Untitled'}
-          </h3>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-sm font-semibold text-amber-300/90">
+              Edit: {active.label || 'Untitled'}
+            </h3>
+            <button
+              type="button"
+              className="rf-btn min-h-10 text-xs"
+              onClick={() => setDetailsOpen(false)}
+            >
+              Hide details
+            </button>
+          </div>
 
           <label>
             <span className="rf-label">Label (your name for this file)</span>
@@ -356,7 +437,7 @@ export function ApplicationsPanel({
 
           <div className="rounded-xl border border-slate-700 bg-slate-900/50 p-3">
             <p className="text-sm font-medium text-slate-100">
-              Emails on this version
+              Emails on this resume
             </p>
             <p className="mt-1 text-xs text-slate-500">
               Master Contact keeps both addresses. Uncheck work email for

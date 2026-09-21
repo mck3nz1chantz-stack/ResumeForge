@@ -1,7 +1,7 @@
 import { usePressFlash } from '../hooks/usePressFlash'
 import type { NavSection } from '../types/profile'
 
-export type MobileTab = 'preview' | 'jobs' | 'applications' | 'more'
+export type MobileTab = 'jobs' | 'applications' | 'apply' | 'more'
 
 const TABS: {
   id: MobileTab
@@ -10,9 +10,9 @@ const TABS: {
   /** Simple monochrome glyph — not emoji */
   icon: string
 }[] = [
-  { id: 'preview', label: 'Layout', section: 'preview', icon: '▣' },
   { id: 'jobs', label: 'Jobs', section: 'jobs', icon: '☰' },
-  { id: 'applications', label: 'Build', section: 'applications', icon: '◆' },
+  { id: 'applications', label: 'Resumes', section: 'applications', icon: '◆' },
+  { id: 'apply', label: 'Apply', section: 'apply', icon: '→' },
   { id: 'more', label: 'More', section: 'skills', icon: '···' },
 ]
 
@@ -72,8 +72,8 @@ export function MobileBottomNav({
 }: Props) {
   const activeTab: MobileTab = moreHub
     ? 'more'
-    : section === 'preview'
-      ? 'preview'
+    : section === 'apply' || section === 'jd-tailor'
+      ? 'apply'
       : section === 'jobs'
         ? 'jobs'
         : section === 'applications'

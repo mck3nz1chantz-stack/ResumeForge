@@ -24,13 +24,11 @@ type Props = {
   onCommitNamed: (label: string, mode: SaveMode) => void
   /** Jump to Target / apps for rename, delete, featured jobs, etc. */
   onManage: () => void
-  /** Primary: open New Build dialog (new resume for a role) */
-  onNewBuild: () => void
 }
 
 /**
- * Always-visible builds strip: New Build + load dropdown + Save.
- * Builds share master contact/jobs; each picks which jobs print.
+ * Resume picker strip: load dropdown + Save.
+ * Resumes share master contact/jobs; each picks which jobs print.
  */
 export function VersionSwitcher({
   applications,
@@ -40,7 +38,6 @@ export function VersionSwitcher({
   onSaveCurrent,
   onCommitNamed,
   onManage,
-  onNewBuild,
 }: Props) {
   const [dialog, setDialog] = useState<SaveMode | null>(null)
   const [name, setName] = useState('')
@@ -80,7 +77,7 @@ export function VersionSwitcher({
   }
 
   const commitDialog = () => {
-    const label = name.trim() || 'Untitled version'
+    const label = name.trim() || 'Untitled resume'
     if (!dialog) return
     onCommitNamed(label, dialog)
     setDialog(null)
@@ -95,7 +92,7 @@ export function VersionSwitcher({
         <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2">
           <div className="min-w-0">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-500/90">
-              Builds
+              Resumes
             </p>
             <p className="text-sm text-slate-300">
               {active ? (
@@ -107,7 +104,7 @@ export function VersionSwitcher({
                 </>
               ) : (
                 <span className="text-slate-400">
-                  No build selected — master info only
+                  No resume selected — master info only
                 </span>
               )}
               {saveFlash ? (
@@ -115,20 +112,12 @@ export function VersionSwitcher({
               ) : null}
             </p>
           </div>
-          <CtaButton
-            variant="primary"
-            className="min-h-12 min-w-[9.5rem] flex-1 touch-manipulation text-base font-bold sm:flex-none sm:px-5"
-            onClick={onNewBuild}
-            title="Create a new resume for a role (master contact + jobs stay)"
-          >
-            + New Build
-          </CtaButton>
         </div>
 
         <div className="flex flex-wrap items-end gap-2 sm:gap-3">
           <label className="min-w-0 flex-1 basis-[12rem]">
             <span className="rf-label !mb-1 flex items-center justify-between gap-2">
-              <span>Load a build</span>
+              <span>Load a resume</span>
               <span className="font-normal normal-case tracking-normal text-slate-500">
                 {versionCount === 0
                   ? 'none yet'
@@ -138,7 +127,7 @@ export function VersionSwitcher({
             <select
               className="rf-input min-h-11 w-full touch-manipulation text-sm sm:min-h-10"
               value={activeId ?? ''}
-              aria-label="Load a saved build"
+              aria-label="Load a saved resume"
               onChange={(e) => {
                 const v = e.target.value
                 onSelect(v === '' ? null : v)
@@ -187,14 +176,14 @@ export function VersionSwitcher({
                     }
                   : undefined
               }
-              title="Save this build’s settings"
+              title="Save this resume’s settings"
             >
               Save
             </CtaButton>
             <CtaButton
               className="min-h-11 flex-1 touch-manipulation text-sm sm:min-h-10 sm:flex-none"
               onClick={openSaveAs}
-              title="Duplicate this build under a new name"
+              title="Duplicate this resume under a new name"
             >
               Save as…
             </CtaButton>
@@ -203,15 +192,10 @@ export function VersionSwitcher({
               onClick={onManage}
               title="Jobs on this resume, tone, rename, delete"
             >
-              Edit build
+              Edit resume
             </CtaButton>
           </div>
         </div>
-        <p className="mt-2 text-[11px] leading-snug text-slate-500">
-          <strong className="font-medium text-slate-400">New Build</strong> =
-          new resume for a job. Master bank (contact + all roles) is shared.
-          Each build checkboxes which jobs appear.
-        </p>
       </div>
 
       {dialog && (
@@ -235,16 +219,16 @@ export function VersionSwitcher({
               className="text-base font-semibold text-slate-50"
             >
               {dialog === 'save-as'
-                ? 'Save as new version'
-                : 'Save resume version'}
+                ? 'Save as new resume'
+                : 'Save this resume'}
             </h2>
             <p id={descId} className="mt-1 text-sm text-slate-400">
               {dialog === 'save-as'
-                ? 'Creates another named version. Master profile stays shared — only target settings are copied.'
-                : 'Name this version so you can load it later from the dropdown. Master history stays one place.'}
+                ? 'Creates another named resume. Master profile stays shared — only target settings are copied.'
+                : 'Name this resume so you can load it later from the dropdown. Master history stays one place.'}
             </p>
             <label className="mt-4 block">
-              <span className="rf-label">Version name</span>
+              <span className="rf-label">Resume name</span>
               <input
                 data-rf-version-name
                 className="rf-input min-h-11"
@@ -266,7 +250,7 @@ export function VersionSwitcher({
                 className="min-h-11 flex-1 font-semibold sm:flex-none"
                 onClick={commitDialog}
               >
-                Save version
+                Save resume
               </CtaButton>
               <CtaButton
                 className="min-h-11 flex-1 sm:flex-none"

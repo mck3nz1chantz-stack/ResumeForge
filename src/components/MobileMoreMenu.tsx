@@ -4,18 +4,20 @@ import {
   GITHUB_REPO_URL,
 } from '../data/projectLinks'
 import { CtaButton } from './CtaButton'
+import { MobileInstallBanner } from './MobileInstallBanner'
 import { usePressFlash } from '../hooks/usePressFlash'
 import type { NavSection } from '../types/profile'
 
 const ITEMS: { id: NavSection; label: string; hint: string }[] = [
-  { id: 'preview', label: '1 · Layout', hint: 'Template & export first' },
+  { id: 'apply', label: 'Apply now', hint: 'Posting · jobs on this resume · PDF' },
+  { id: 'preview', label: 'All layouts', hint: '18 ATS templates' },
   { id: 'contact', label: '2 · Contact', hint: 'Name, emails, phone, city' },
   { id: 'summary', label: '3 · Summary', hint: 'Professional summary (header)' },
   { id: 'skills', label: '4 · Skills', hint: 'Master skills bank' },
   { id: 'jobs', label: '5 · Experience', hint: 'Master job bank' },
   { id: 'education', label: '6 · Education', hint: 'School & credentials' },
   { id: 'certs', label: '7 · Certs', hint: 'OSHA, forklift, lean…' },
-  { id: 'applications', label: '8 · This build', hint: 'Jobs/skills pick · emails · tone' },
+  { id: 'applications', label: '8 · This resume', hint: 'Jobs/skills pick · emails · tone' },
   { id: 'jd-tailor', label: 'JD keywords', hint: 'Paste JD · match checklist · pin bullets' },
   { id: 'internal-promo', label: 'Internal promo', hint: 'Company · titles · readiness' },
   { id: 'library', label: 'Achievements', hint: 'Library + light polish accept/reject' },
@@ -75,6 +77,7 @@ export function MobileMoreMenu({
       <p className="text-center text-[10px] text-slate-500">
         Share the GitHub link for free clones — not a temporary demo host.
       </p>
+      <MobileInstallBanner />
 
       <ul className="space-y-1">
         {ITEMS.map((item) => (
